@@ -1,5 +1,6 @@
-package com.example.weather_app
+package com.example.weather_app.api
 
+import com.example.weather_app.WeatherResponse
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
@@ -16,7 +17,7 @@ interface WeatherApi {
     companion object{
         private const val BASE_URL = "https://api.openweathermap.org/data/2.5/"
 
-        fun create(): WeatherApi{
+        fun create(): WeatherApi {
             val retrofit = Retrofit.Builder()
                 .addConverterFactory(GsonConverterFactory.create())
                 .baseUrl(BASE_URL)
