@@ -1,4 +1,4 @@
-package com.example.weather_app.ui.theme
+package com.example.weather_app.ui.theme.screens
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -9,6 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.sp
+import com.example.weather_app.ui.theme.BlueJC
 
 @Composable
 fun Data(){

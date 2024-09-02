@@ -2,7 +2,7 @@ package com.example.weather_app.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.weather_app.WeatherResponse
+import com.example.weather_app.model.WeatherResponse
 import com.example.weather_app.api.WeatherApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
