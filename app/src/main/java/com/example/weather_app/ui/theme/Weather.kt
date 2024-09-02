@@ -1,5 +1,6 @@
 package com.example.weather_app.ui.theme
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -56,7 +57,6 @@ fun WeatherScreen(){
         mutableStateOf("")
     }
     val apiKey = "bd5ffc0a924060bd54f9267fa6f6ec4f"
-
     Box(modifier = Modifier
         .fillMaxSize()
         .paint(
@@ -68,40 +68,51 @@ fun WeatherScreen(){
             .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Top) {
-            Spacer(modifier = Modifier.height(180.dp))
-            OutlinedTextField(value = city,
-                onValueChange = {city = it},
-                label = { Text(text = "City") },
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(30.dp),
-                colors = TextFieldDefaults.textFieldColors(
-                    containerColor = Color.White,
-                    unfocusedIndicatorColor = BlueJC,
-                    focusedIndicatorColor = BlueJC,
-                    focusedLabelColor = DarkBlueJC
-                )
-            )
-            Spacer(modifier = Modifier.height(16.dp))
+//            Spacer(modifier = Modifier.height(180.dp))
+//            OutlinedTextField(value = city,
+//                onValueChange = {city = it},
+//                label = { Text(text = "City") },
+//                modifier = Modifier.fillMaxWidth(),
+//                shape = RoundedCornerShape(30.dp),
+//                colors = TextFieldDefaults.textFieldColors(
+//                    containerColor = Color.White,
+//                    unfocusedIndicatorColor = BlueJC,
+//                    focusedIndicatorColor = BlueJC,
+//                    focusedLabelColor = DarkBlueJC
+//                )
+//            )
+//            Spacer(modifier = Modifier.height(16.dp))
 //            Button(onClick = { viewModel.fetchWeather(city, apiKey) },
 //                colors = ButtonDefaults.buttonColors(BlueJC)) {
 //                Text(text = "Check Weather")
 //            }
             viewModel.fetchWeather("Da Nang", apiKey)
-            Spacer(modifier = Modifier.height(16.dp))
-            weatherData?.let {
+//            Spacer(modifier = Modifier.height(16.dp))
+//            weatherData?.let {
+//                Row(modifier = Modifier
+//                    .fillMaxWidth(),
+//                    horizontalArrangement = Arrangement.SpaceEvenly) {
+//                    WeatherCard(label = "Address", value = "Da Nang", icon = Icons.Default.Place)
+//                    WeatherCard(label = "Temperature", value = "${it.main.temp}'C", icon = Icons.Default.Star)
+//                }
+//                Row(modifier = Modifier
+//                    .fillMaxWidth(),
+//                    horizontalArrangement = Arrangement.SpaceEvenly) {
+//                    WeatherCard(label = "Humidtity", value = "${it.main.humidity}", icon = Icons.Default.Warning )
+//                    WeatherCard(label = "Description", value = it.weather[0].description , icon = Icons.Default.Info)
+//                }
                 Row(modifier = Modifier
-                    .fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceEvenly) {
-                    WeatherCard(label = "Address", value = "Da Nang", icon = Icons.Default.Place)
-                    WeatherCard(label = "Temperature", value = "${it.main.temp}'C", icon = Icons.Default.Star)
+                    .fillMaxWidth()
+                    .height(20.dp)
+                    .background(Color.Transparent),
+                    horizontalArrangement = Arrangement.Start){
+                    weatherData?.let { 
+                        Text(text = "${it.main.temp}°C",
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Bold)
+                    }
                 }
-                Row(modifier = Modifier
-                    .fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceEvenly) {
-                    WeatherCard(label = "Humidtity", value = "${it.main.humidity}", icon = Icons.Default.Warning )
-                    WeatherCard(label = "Description", value = it.weather[0].description , icon = Icons.Default.Info)
-                }
-            }
+//            }
         }
     }
 }
