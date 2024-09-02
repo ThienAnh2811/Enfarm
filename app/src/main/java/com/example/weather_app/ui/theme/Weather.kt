@@ -45,7 +45,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.weather_app.R
+<<<<<<< HEAD
 import com.example.weather_app.viewmodel.WeatherViewModel
+=======
+import com.example.weather_app.WeatherViewModel
+>>>>>>> origin/master
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -82,17 +86,28 @@ fun WeatherScreen(){
                 )
             )
             Spacer(modifier = Modifier.height(16.dp))
+<<<<<<< HEAD
 //            Button(onClick = { viewModel.fetchWeather(city, apiKey) },
 //                colors = ButtonDefaults.buttonColors(BlueJC)) {
 //                Text(text = "Check Weather")
 //            }
             viewModel.fetchWeather("Da Nang", apiKey)
+=======
+            Button(onClick = { viewModel.fetchWeather(city, apiKey) },
+                colors = ButtonDefaults.buttonColors(BlueJC)) {
+                Text(text = "Check Weather")
+            }
+>>>>>>> origin/master
             Spacer(modifier = Modifier.height(16.dp))
             weatherData?.let {
                 Row(modifier = Modifier
                     .fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceEvenly) {
+<<<<<<< HEAD
                     WeatherCard(label = "Address", value = "Da Nang", icon = Icons.Default.Place)
+=======
+                    WeatherCard(label = city, value = it.name, icon = Icons.Default.Place)
+>>>>>>> origin/master
                     WeatherCard(label = "Temperature", value = "${it.main.temp}'C", icon = Icons.Default.Star)
                 }
                 Row(modifier = Modifier
