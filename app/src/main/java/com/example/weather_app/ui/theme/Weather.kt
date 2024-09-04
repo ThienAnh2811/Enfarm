@@ -69,9 +69,9 @@ fun WeatherCard(label: String, icon: ImageVector, onClick: () -> Unit){
 
         modifier = Modifier
             .padding(8.dp)
-            .width(120.dp)
+            .width(100.dp)
             .clickable { onClick() }
-            .height(100.dp),
+            .height(90.dp),
         colors = CardDefaults.cardColors(Color.White),
         elevation = CardDefaults.cardElevation(4.dp)){
 

@@ -5,6 +5,7 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 
 import androidx.compose.foundation.layout.fillMaxSize
@@ -12,10 +13,14 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.rounded.Menu
+import androidx.compose.material.icons.rounded.NotificationsActive
+import androidx.compose.material.icons.rounded.PersonOutline
 import androidx.compose.material3.Divider
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -48,9 +53,14 @@ import com.example.weather_app.ui.theme.screens.Data
 import com.example.weather_app.ui.theme.screens.Diseases
 import com.example.weather_app.ui.theme.screens.Home
 import com.example.weather_app.model.Screens
+import com.example.weather_app.ui.theme.DarkBlueJC
 import com.example.weather_app.ui.theme.screens.WeatherS
 import com.example.weather_app.ui.theme.Weather_AppTheme
+import com.example.weather_app.ui.theme.screens.Knowledge
+import com.example.weather_app.ui.theme.screens.News
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Date
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -144,6 +154,20 @@ fun BottomAppBar(){
                             Icon(imageVector = Icons.Rounded.Menu,
                                 contentDescription = "MenuButton")
                         }
+                    },
+                    actions = {
+                        IconButton(onClick = {Toast.makeText(context, "Notification", Toast.LENGTH_SHORT).show()}) {
+                            Icon(
+                                imageVector = Icons.Rounded.NotificationsActive,
+                                contentDescription = "Localized description",
+                            )
+                        }
+                        IconButton(onClick = {Toast.makeText(context, "Notification", Toast.LENGTH_SHORT).show()}) {
+                            Icon(
+                                imageVector = Icons.Rounded.PersonOutline,
+                                contentDescription = "Localized description",
+                            )
+                        }
                     })
             },
 bottomBar = {
@@ -187,6 +211,8 @@ bottomBar = {
             composable(Screens.Data.screens){ Data() }
             composable(Screens.Weather.screens){ WeatherS() }
             composable(Screens.Diseases.screens){ Diseases() }
+            composable(Screens.News.screens){ News() }
+            composable(Screens.Knowledge.screens){ Knowledge() }
         }
 }
     }
