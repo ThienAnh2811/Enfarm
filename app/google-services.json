@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "572195401001",
+    "project_id": "smart-farm-29fdf",
+    "storage_bucket": "smart-farm-29fdf.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:572195401001:android:b799eb2f28f16c842e1b38",
+        "android_client_info": {
+          "package_name": "com.example.weather_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDZZEJP4o3o05zsCi9Avni1ctF3kuJIs7g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
