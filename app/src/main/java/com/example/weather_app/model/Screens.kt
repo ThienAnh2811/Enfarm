@@ -7,5 +7,6 @@ sealed class Screens(val screens: String) {
     data object Weather: Screens("Weather")
     data object News: Screens("News")
     data object Knowledge: Screens("Knowledge")
+    data object Login: Screens("Login")
 }
 
