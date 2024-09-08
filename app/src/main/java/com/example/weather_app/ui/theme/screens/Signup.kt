@@ -16,6 +16,11 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -26,12 +31,20 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import com.example.weather_app.R
+import com.example.weather_app.model.Screens
 import com.example.weather_app.ui.theme.BlueJC
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Signup(){
+fun Signup(navController: NavHostController){
+    var password: String? = null
+    var name: String? = null
+    var email: String? = null
+    var confirm_password: String? = null
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -51,41 +64,52 @@ fun Signup(){
         )
         OutlinedTextField(
             value = "",
-            onValueChange = {},
+            onValueChange = {
+                            name = it },
             placeholder = { Text("Name", fontWeight = FontWeight.Bold) },
             modifier = Modifier.fillMaxWidth(),
-            colors = TextFieldDefaults.textFieldColors(containerColor = Color.LightGray)
+            colors = TextFieldDefaults.textFieldColors(containerColor = Color.LightGray),
+            isError = name?.length!! < 1
         )
         Spacer(modifier = Modifier.height(8.dp))
         OutlinedTextField(
             value = "",
-            onValueChange = {},
+            onValueChange = {
+                            email = it
+            },
             placeholder = { Text("Email",fontWeight = FontWeight.Bold) },
             modifier = Modifier.fillMaxWidth(),
-            colors = TextFieldDefaults.textFieldColors(containerColor = Color.LightGray)
+            colors = TextFieldDefaults.textFieldColors(containerColor = Color.LightGray),
+            isError = email?.length!! < 1
         )
         Spacer(modifier = Modifier.height(8.dp))
         OutlinedTextField(
             value = "",
-            onValueChange = {},
+            onValueChange = {
+                            password = it
+            },
             placeholder = { Text("Password", fontWeight = FontWeight.Bold) },
             visualTransformation = PasswordVisualTransformation(),
             modifier = Modifier.fillMaxWidth(),
-            colors = TextFieldDefaults.textFieldColors(containerColor = Color.LightGray)
+            colors = TextFieldDefaults.textFieldColors(containerColor = Color.LightGray),
+            isError = password?.length!! < 1
 
         )
         Spacer(modifier = Modifier.height(8.dp))
         OutlinedTextField(
             value = "",
-            onValueChange = {},
+            onValueChange = {
+                            confirm_password = it
+            },
             placeholder = { Text("Confirm Password",  fontWeight = FontWeight.Bold) },
             visualTransformation = PasswordVisualTransformation(),
             modifier = Modifier.fillMaxWidth(),
-            colors = TextFieldDefaults.textFieldColors(containerColor = Color.LightGray)
+            colors = TextFieldDefaults.textFieldColors(containerColor = Color.LightGray),
+            isError = confirm_password?.length!! < 1 || !confirm_password.equals(password)
         )
         Spacer(modifier = Modifier.height(16.dp))
         Button(
-            onClick = { /*TODO*/ },
+            onClick = { navController.navigate("Otp/$email/$password") },
             modifier = Modifier.fillMaxWidth(),
             shape = RectangleShape,
             colors = ButtonDefaults.buttonColors(containerColor = BlueJC)
@@ -94,3 +118,4 @@ fun Signup(){
         }
     }
 }
+

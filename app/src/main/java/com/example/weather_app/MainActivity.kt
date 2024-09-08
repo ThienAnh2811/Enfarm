@@ -235,16 +235,19 @@ fun BottomAppBar(){
                 }
             }
         ) {
-            navGraph(navController = navigationController)
-//                paddingValues ->  NavHost(navController = navigationController,
-//            startDestination = Screens.Home.screens,
-//            modifier = Modifier.padding(paddingValues)){
-//            composable(Screens.Home.screens){ Home(navigationController) }
-//            composable(Screens.Data.screens){ Data() }
-//            composable(Screens.Weather.screens){ WeatherS() }
-//            composable(Screens.Diseases.screens){ Diseases() }
-//            composable(Screens.News.screens){ News() }
-//            composable(Screens.Knowledge.screens){ Knowledge() }
+//            navGraph(navController = navigationController)
+                paddingValues ->
+            NavHost(
+                navController = navigationController,
+                startDestination = Screens.Home.screens,
+                modifier = Modifier.padding(paddingValues)
+            ) {
+                composable(Screens.Home.screens) { Home(navigationController) }
+                composable(Screens.Data.screens) { Data() }
+                composable(Screens.Weather.screens) { WeatherS() }
+                composable(Screens.Diseases.screens) { Diseases() }
+                composable(Screens.News.screens) { News() }
+                composable(Screens.Knowledge.screens) { Knowledge() }
 //            composable("Login"){ Login(navigationController) }
 //            composable("Signup"){ Signup(navigationController) }
 //            composable("Otp?email={email}&password={password}",
@@ -259,19 +262,20 @@ fun BottomAppBar(){
 //            ){  backStackEntry -> OTP(navController = navigationController,
 //                email = backStackEntry.arguments?.getString("email")!!,
 //                password = backStackEntry.arguments?.getString("password")!!) }
+            }
         }
     }
 }
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun MainScaffold(
-    topBar: @Composable (() -> Unit) = {},
-    bottomBar: @Composable (() -> Unit) = {},
-    content: @Composable (PaddingValues) -> Unit){
-    Scaffold(
-        bottomBar = bottomBar,
-        topBar = topBar,
-        content = content
-    )
-}
-
+//@OptIn(ExperimentalMaterial3Api::class)
+//@Composable
+//fun MainScaffold(
+//    topBar: @Composable (() -> Unit) = {},
+//    bottomBar: @Composable (() -> Unit) = {},
+//    content: @Composable (PaddingValues) -> Unit){
+//    Scaffold(
+//        bottomBar = bottomBar,
+//        topBar = topBar,
+//        content = content
+//    )
+//}
+//

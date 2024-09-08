@@ -118,6 +118,7 @@ fun Home(navController: NavHostController){
                     Text(text = "${dayOfWeek}, ${formattedDate}")
                 }
             }
+            Spacer(modifier = Modifier.height(60.dp))
             Box(modifier = Modifier
                 .fillMaxWidth()
                 .height(320.dp)) {
