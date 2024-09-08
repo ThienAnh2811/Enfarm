@@ -1,5 +1,7 @@
 package com.example.weather_app.ui.theme.screens
 
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -7,18 +9,25 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Book
 import androidx.compose.material.icons.filled.Cloud
 import androidx.compose.material.icons.filled.Newspaper
 import androidx.compose.material.icons.filled.WarningAmber
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -27,10 +36,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.paint
-import androidx.compose.ui.focus.FocusRequester.Companion.createRefs
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.modifier.ModifierLocal
+import androidx.compose.ui.modifier.modifierLocalProvider
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -42,15 +53,27 @@ import com.example.weather_app.model.Screens
 import com.example.weather_app.ui.theme.BlueJC
 import com.example.weather_app.ui.theme.WeatherCard
 import com.example.weather_app.viewmodel.WeatherViewModel
-import java.text.SimpleDateFormat
+import kotlinx.coroutines.delay
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
-import java.util.Date
 
 
-@OptIn(ExperimentalComposeUiApi::class)
+@OptIn(ExperimentalComposeUiApi::class, ExperimentalFoundationApi::class)
 @Composable
 fun Home(navController: NavHostController){
+    val images = listOf(
+        R.drawable.firefly,
+        R.drawable.marisa
+    )
+    val pagerState = rememberPagerState(pageCount = { images.size })
+    LaunchedEffect(Unit){
+        while (true){
+            delay(2000)
+            val nextPage = (pagerState.currentPage + 1)%pagerState.pageCount
+            pagerState.scrollToPage(nextPage)
+        }
+    }
+
     val viewModel: WeatherViewModel = viewModel()
     val weatherData by viewModel.weatherData.collectAsState()
     val currentDate = LocalDate.now()
@@ -95,15 +118,23 @@ fun Home(navController: NavHostController){
                     Text(text = "${dayOfWeek}, ${formattedDate}")
                 }
             }
-//            Box(modifier = Modifier.fillMaxWidth()) {
-                Image(painter = painterResource(id = R.drawable.torako),
-                    contentDescription = "torako",
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(320.dp)
-                        .padding(bottom = 88.dp)
-                 )
-//            }
+            Box(modifier = Modifier
+                .fillMaxWidth()
+                .height(320.dp)) {
+                HorizontalPager(state = pagerState,
+                    modifier = Modifier.wrapContentSize()) {
+                    currentPage -> Card(
+                        modifier = Modifier.wrapContentSize(),
+                        elevation = CardDefaults.cardElevation(8.dp)
+                    ) {
+                        Image(painter = painterResource(id = images[currentPage]),
+                            contentDescription = "")
+                }
+                }
+//                PageIndicator(pageCount = images.size,
+//                    currentPage = pagerState.currentPage)
+
+            }
 
 //            Spacer(modifier = Modifier.height(5.dp))
 
@@ -133,5 +164,29 @@ fun Home(navController: NavHostController){
 
         }
 
+
     }
 }
+
+//@Composable
+//fun PageIndicator(pageCount: Int, currentPage: Int) {
+//    Row(
+//        horizontalArrangement = Arrangement.SpaceBetween,
+//        verticalAlignment = Alignment.CenterVertically,
+//    ) {
+//        repeat(pageCount) {
+//            IndicatorDots(isSelected = it == currentPage)
+//        }
+//    }
+//}
+//
+//@Composable
+//fun IndicatorDots(isSelected: Boolean) {
+//    val size = animateDpAsState(targetValue = if (isSelected) 12.dp else 10.dp
+//        , label ="")
+//    Box(modifier = Modifier
+//        .padding(2.dp)
+//        .size(size.value)
+//        .clip(CircleShape)
+//        .background(if (isSelected) Color(0xff373737) else Color(0xA8373737)))
+//}
