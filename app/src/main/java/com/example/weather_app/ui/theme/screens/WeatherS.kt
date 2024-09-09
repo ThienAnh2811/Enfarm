@@ -52,7 +52,7 @@ fun WeatherS() {
     val weatherData by viewModel.weatherData.collectAsState()
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
+        verticalArrangement = Arrangement.Top,
         modifier = Modifier.background(Color.Transparent)
     ) {
 //        Spacer(modifier = Modifier.height(150.dp))
@@ -68,7 +68,7 @@ fun WeatherS() {
         ) {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center,
+                verticalArrangement = Arrangement.Top,
                 modifier = Modifier
                     .fillMaxWidth()
                     .background(Color.Transparent)
