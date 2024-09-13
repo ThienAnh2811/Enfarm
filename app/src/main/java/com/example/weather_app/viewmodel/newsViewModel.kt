@@ -4,7 +4,6 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.viewModelScope
-import com.example.weather_app.data.OfflineNewsRepository
 import com.example.weather_app.data.newsDB
 import com.example.weather_app.data.newsRepository
 import com.example.weather_app.model.News
@@ -17,8 +16,8 @@ class NewsViewModel(application: Application) : AndroidViewModel(application) {
 
     init {
         val newsDAO = newsDB.getDatabase(application).newsDAO()
-        repository = OfflineNewsRepository(newsDAO)
-        allNews = repository.getAllNewsStream()
+        repository = newsRepository(newsDAO)
+        allNews = repository.allNews
     }
 
     fun getNews(id: Int): LiveData<News?> {
