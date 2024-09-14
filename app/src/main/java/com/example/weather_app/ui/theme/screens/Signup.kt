@@ -40,11 +40,12 @@ import com.example.weather_app.ui.theme.BlueJC
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Signup(navController: NavHostController){
-    var password: String? = null
-    var name: String? = null
-    var email: String? = null
-    var confirm_password: String? = null
+fun Signup(navController: NavHostController) {
+    var name by rememberSaveable { mutableStateOf("") }
+    var email by rememberSaveable { mutableStateOf("") }
+    var password by rememberSaveable { mutableStateOf("") }
+    var confirmPassword by rememberSaveable { mutableStateOf("") }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -55,61 +56,71 @@ fun Signup(navController: NavHostController){
     ) {
         Text(text = "Sign Up", fontSize = 35.sp, fontWeight = FontWeight.Bold)
 
-        Image(painter = painterResource(id = R.drawable.signup),
-            contentDescription = "torako",
+        Image(
+            painter = painterResource(id = R.drawable.signup),
+            contentDescription = "Signup Image",
             modifier = Modifier
                 .fillMaxWidth()
                 .height(320.dp)
                 .padding(bottom = 88.dp)
         )
+
         OutlinedTextField(
-            value = "",
-            onValueChange = {
-                            name = it },
+            value = name,
+            onValueChange = { name = it },
             placeholder = { Text("Name", fontWeight = FontWeight.Bold) },
             modifier = Modifier.fillMaxWidth(),
             colors = TextFieldDefaults.textFieldColors(containerColor = Color.LightGray),
-            isError = name?.length!! < 1
+            isError = name.isEmpty(),
+            singleLine = true
         )
+
         Spacer(modifier = Modifier.height(8.dp))
+
         OutlinedTextField(
-            value = "",
-            onValueChange = {
-                            email = it
-            },
-            placeholder = { Text("Email",fontWeight = FontWeight.Bold) },
+            value = email,
+            onValueChange = { email = it },
+            placeholder = { Text("Email", fontWeight = FontWeight.Bold) },
             modifier = Modifier.fillMaxWidth(),
             colors = TextFieldDefaults.textFieldColors(containerColor = Color.LightGray),
-            isError = email?.length!! < 1
+            isError = email.isEmpty(),
+            singleLine = true
         )
+
         Spacer(modifier = Modifier.height(8.dp))
+
         OutlinedTextField(
-            value = "",
-            onValueChange = {
-                            password = it
-            },
+            value = password,
+            onValueChange = { password = it },
             placeholder = { Text("Password", fontWeight = FontWeight.Bold) },
             visualTransformation = PasswordVisualTransformation(),
             modifier = Modifier.fillMaxWidth(),
             colors = TextFieldDefaults.textFieldColors(containerColor = Color.LightGray),
-            isError = password?.length!! < 1
-
+            isError = password.isEmpty(),
+            singleLine = true
         )
+
         Spacer(modifier = Modifier.height(8.dp))
+
         OutlinedTextField(
-            value = "",
-            onValueChange = {
-                            confirm_password = it
-            },
-            placeholder = { Text("Confirm Password",  fontWeight = FontWeight.Bold) },
+            value = confirmPassword,
+            onValueChange = { confirmPassword = it },
+            placeholder = { Text("Confirm Password", fontWeight = FontWeight.Bold) },
             visualTransformation = PasswordVisualTransformation(),
             modifier = Modifier.fillMaxWidth(),
             colors = TextFieldDefaults.textFieldColors(containerColor = Color.LightGray),
-            isError = confirm_password?.length!! < 1 || !confirm_password.equals(password)
+            isError = confirmPassword.isEmpty() || confirmPassword != password,
+            singleLine = true
         )
+
         Spacer(modifier = Modifier.height(16.dp))
+
         Button(
-            onClick = { navController.navigate("Otp/$email/$password") },
+            onClick = {
+                if (email.isNotEmpty() && password.isNotEmpty()) {
+                    navController.navigate(Screens.Otp.createRoute(navController, email, password))
+                }
+            },
             modifier = Modifier.fillMaxWidth(),
             shape = RectangleShape,
             colors = ButtonDefaults.buttonColors(containerColor = BlueJC)
@@ -118,4 +129,3 @@ fun Signup(navController: NavHostController){
         }
     }
 }
-

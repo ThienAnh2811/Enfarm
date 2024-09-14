@@ -19,10 +19,11 @@ import com.example.weather_app.ui.theme.screens.OTP
 import com.example.weather_app.ui.theme.screens.Signup
 import com.example.weather_app.ui.theme.screens.WeatherS
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun navGraph(navController: NavHostController)
 {
-    NavHost(navController = navController, startDestination = Screens.Home.screens)
+    NavHost(navController = navController, startDestination = Screens.SignUp.screens)
     {
         composable(Screens.Home.screens) { Home(navController) }
         composable(Screens.Data.screens) { Data() }
@@ -30,5 +31,18 @@ fun navGraph(navController: NavHostController)
         composable(Screens.Diseases.screens) { Diseases() }
         composable(Screens.News.screens) { News() }
         composable(Screens.Knowledge.screens) { Knowledge() }
+        composable(Screens.Login.screens) { Login(navController)}
+        composable(Screens.SignUp.screens) { Signup(navController) }
+        composable(Screens.Otp.screens,
+            arguments = listOf(
+                navArgument("email"){type = NavType.StringType},
+                navArgument("password"){type = NavType.StringType}
+            )
+        ){
+            navBackStackEntry ->
+            val email = navBackStackEntry.arguments?.getString("email")
+            val password = navBackStackEntry.arguments?.getString("password")
+            OTP(navController = navController, email = email!!, password = password!!)
+        }
     }
 }

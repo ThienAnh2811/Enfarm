@@ -3,6 +3,7 @@ package com.example.weather_app.viewmodel
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.weather_app.data.newsDB
 import com.example.weather_app.data.newsRepository
@@ -13,7 +14,6 @@ import kotlinx.coroutines.launch
 class NewsViewModel(application: Application) : AndroidViewModel(application) {
     private val repository: newsRepository
     val allNews: LiveData<List<News>>
-
     init {
         val newsDAO = newsDB.getDatabase(application).newsDAO()
         repository = newsRepository(newsDAO)
@@ -22,6 +22,14 @@ class NewsViewModel(application: Application) : AndroidViewModel(application) {
 
     fun getNews(id: Int): LiveData<News?> {
         return repository.getNewsStream(id)
+    }
+    fun getNewsCount(): LiveData<Int> {
+        val countLiveData = MutableLiveData<Int>()
+        viewModelScope.launch(Dispatchers.IO) {
+            val count = repository.getCountNews()
+            countLiveData.postValue(count)
+        }
+        return countLiveData
     }
 
     fun insert(news: News) = viewModelScope.launch(Dispatchers.IO) {
@@ -35,4 +43,5 @@ class NewsViewModel(application: Application) : AndroidViewModel(application) {
     fun delete(news: News) = viewModelScope.launch(Dispatchers.IO) {
         repository.deleteNews(news)
     }
+
 }
