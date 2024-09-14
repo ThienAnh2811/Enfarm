@@ -22,4 +22,6 @@ interface newsDAO {
     fun getNews(id: Int): LiveData<News?>
     @Query("select * from news order by title asc")
     fun getAllNews(): LiveData<List<News>>
+    @Query("select count(*) from news")
+    suspend fun getCountNews(): Int
 }

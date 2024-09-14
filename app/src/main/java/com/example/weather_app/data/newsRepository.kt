@@ -9,6 +9,10 @@ class newsRepository(private val newsDAO: newsDAO) {
     {
         return newsDAO.getNews(id)
     }
+    suspend fun getCountNews(): Int
+    {
+        return newsDAO.getCountNews()
+    }
     suspend fun insertNews(news: News)
     {
         newsDAO.insert(news)
