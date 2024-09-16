@@ -5,8 +5,8 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.example.weather_app.data.newsDB
-import com.example.weather_app.data.newsRepository
+import com.example.weather_app.data.news.newsDB
+import com.example.weather_app.data.news.newsRepository
 import com.example.weather_app.model.News
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

@@ -1,4 +1,4 @@
-package com.example.weather_app.data
+package com.example.weather_app.data.news
 
 import android.content.Context
 import androidx.room.Database
@@ -12,8 +12,8 @@ abstract class newsDB: RoomDatabase() {
     companion object{
         @Volatile
         private var Instance: newsDB? = null
-        fun getDatabase(context: Context): newsDB{
-            return Instance?: synchronized(this){
+        fun getDatabase(context: Context): newsDB {
+            return Instance ?: synchronized(this){
                 Room.databaseBuilder(context, newsDB::class.java, "app_db")
                     .build()
                     .also {

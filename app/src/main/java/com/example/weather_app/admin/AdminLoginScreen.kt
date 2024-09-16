@@ -1,6 +1,5 @@
-package com.example.weather_app.ui.theme.screens
+package com.example.weather_app.admin
 
-import android.annotation.SuppressLint
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -8,18 +7,14 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardElevation
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -30,10 +25,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.focus.FocusRequester.Companion.createRefs
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
@@ -45,20 +38,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
-import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import com.example.weather_app.R
 import com.example.weather_app.model.Screens
 import com.example.weather_app.ui.theme.BlueJC
 import com.google.firebase.auth.FirebaseAuth
-import papaya.`in`.sendmail.SendMail
-import kotlin.random.Random
-import kotlin.random.nextInt
 
-@ExperimentalComposeUiApi
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Login(navController: NavHostController) {
+fun AdminLogin(navController: NavHostController){
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     val context = LocalContext.current.applicationContext
@@ -71,7 +59,7 @@ fun Login(navController: NavHostController) {
 
         Box(
             Modifier
-                .background(Color(0xFF6200EE))
+                .background(Color.White)
                 .fillMaxWidth()
                 .height(300.dp)
                 .constrainAs(title) {
@@ -83,8 +71,8 @@ fun Login(navController: NavHostController) {
                 .clip(CutCornerShape(bottomEnd = 30.dp))
         ){
             Image(
-                painter = painterResource(id = R.drawable.signup),
-                contentDescription = "Signup Image",
+                painter = painterResource(id = R.drawable.admin),
+                contentDescription = "Admin Image",
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(320.dp)
@@ -156,7 +144,7 @@ fun Login(navController: NavHostController) {
                                     auth.signInWithEmailAndPassword(email, password)
                                         .addOnCompleteListener {
                                             if (it.isSuccessful) {
-                                                navController.navigate(Screens.Home.createRoute(navController, email)){
+                                                navController.navigate(Screens.AdminHome.createRoute(navController, email)){
                                                     popUpTo(0)
                                                 }
                                             } else {
@@ -180,12 +168,6 @@ fun Login(navController: NavHostController) {
                     }
                 }
                 Spacer(modifier = Modifier.height(16.dp))
-                TextButton(onClick = { navController.navigate(Screens.SignUp.screens) }) {
-                    Text("Don't have an Account? Sign Up", fontSize = 17.sp)
-                }
-                TextButton(onClick = { navController.navigate(Screens.AdminLogin.screens) }) {
-                    Text("Login as admin", fontSize = 17.sp, color = Color.Red)
-                }
             }
         }
     }

@@ -1,4 +1,4 @@
-package com.example.weather_app.data
+package com.example.weather_app.data.news
 
 import androidx.lifecycle.LiveData
 import androidx.room.Dao
@@ -8,7 +8,6 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
 import com.example.weather_app.model.News
-import java.util.concurrent.Flow
 
 @Dao
 interface newsDAO {

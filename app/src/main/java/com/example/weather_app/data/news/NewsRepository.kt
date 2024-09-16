@@ -1,6 +1,7 @@
-package com.example.weather_app.data
+package com.example.weather_app.data.news
 
 import androidx.lifecycle.LiveData
+import com.example.weather_app.data.news.newsDAO
 import com.example.weather_app.model.News
 
 class newsRepository(private val newsDAO: newsDAO) {
