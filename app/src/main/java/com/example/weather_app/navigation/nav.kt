@@ -23,9 +23,12 @@ import com.example.weather_app.ui.theme.screens.WeatherS
 @Composable
 fun navGraph(navController: NavHostController)
 {
-    NavHost(navController = navController, startDestination = Screens.SignUp.screens)
+    NavHost(navController = navController, startDestination = Screens.Login.screens)
     {
-        composable(Screens.Home.screens) { Home(navController) }
+        composable(Screens.Home.screens,
+            arguments = listOf(navArgument("email"){type= NavType.StringType})
+        ) { navBackStackEntry -> val email= navBackStackEntry.arguments?.getString("email")
+            Home(navController = navController, email = email!!) }
         composable(Screens.Data.screens) { Data() }
         composable(Screens.Weather.screens) { WeatherS() }
         composable(Screens.Diseases.screens) { Diseases() }

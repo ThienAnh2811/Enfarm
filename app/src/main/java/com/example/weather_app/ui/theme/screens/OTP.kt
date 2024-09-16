@@ -43,6 +43,7 @@ import com.example.weather_app.R
 import com.example.weather_app.model.Screens
 import com.example.weather_app.ui.theme.BlueJC
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -137,7 +138,7 @@ fun OTP(navController: NavHostController, email: String, password: String) {
                 } else {
                     auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener {
                         if (it.isSuccessful) {
-                            navController.navigate(Screens.Home.screens){
+                            navController.navigate(Screens.Home.createRoute(navController, email)){
                                 popUpTo(0)
                             }
                         } else {

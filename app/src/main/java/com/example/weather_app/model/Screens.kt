@@ -4,7 +4,10 @@ import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 
 sealed class Screens(val screens: String) {
-    data object Home: Screens("Home")
+    data object Home: Screens("Home/{email}"){
+        fun createRoute(navController: NavHostController,
+                        email: String)="Home/$email"
+    }
     data object Data: Screens("Data")
     data object Diseases: Screens("Diseases")
     data object Weather: Screens("Weather")
