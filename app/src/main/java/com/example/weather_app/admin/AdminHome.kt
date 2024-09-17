@@ -37,7 +37,6 @@ import com.example.weather_app.ui.theme.BlueJC
 //@Preview(showBackground = true)
 @Composable
 fun AdminHome(navController: NavHostController, email: String) {
-    Toast.makeText(LocalContext.current.applicationContext, "$email", Toast.LENGTH_SHORT).show()
     Column(modifier = Modifier
         .fillMaxWidth()
         .fillMaxHeight()
