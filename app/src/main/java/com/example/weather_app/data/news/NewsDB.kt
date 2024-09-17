@@ -14,7 +14,7 @@ abstract class newsDB: RoomDatabase() {
         private var Instance: newsDB? = null
         fun getDatabase(context: Context): newsDB {
             return Instance ?: synchronized(this){
-                Room.databaseBuilder(context, newsDB::class.java, "app_db")
+                Room.databaseBuilder(context, newsDB::class.java, "news_db")
                     .build()
                     .also {
                         Instance = it

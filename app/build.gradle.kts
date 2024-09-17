@@ -85,5 +85,6 @@ dependencies {
     implementation("com.google.firebase:firebase-database:21.0.0")
     implementation ("com.github.1902shubh:SendMail:1.0.0")
     implementation ("androidx.compose.ui:ui:1.6.8")
+    implementation ("androidx.compose.ui:ui-text:1.6.0")
     implementation ("com.google.firebase:firebase-firestore-ktx:24.4.2")
 }

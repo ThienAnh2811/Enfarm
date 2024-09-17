@@ -2,6 +2,7 @@ package com.example.weather_app.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.ExperimentalComposeUiApi
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -21,11 +22,13 @@ import com.example.weather_app.ui.theme.screens.News
 import com.example.weather_app.ui.theme.screens.OTP
 import com.example.weather_app.ui.theme.screens.Signup
 import com.example.weather_app.ui.theme.screens.WeatherS
+import com.example.weather_app.viewmodel.NewsViewModel
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun navGraph(navController: NavHostController)
 {
+    val newsViewModel: NewsViewModel = viewModel()
     NavHost(navController = navController, startDestination = Screens.Login.screens)
     {
         composable(Screens.AdminLogin.screens){ AdminLogin(navController = navController)}
@@ -36,7 +39,7 @@ fun navGraph(navController: NavHostController)
         composable(Screens.Knowledge.screens) { Knowledge() }
         composable(Screens.Login.screens) { Login(navController)}
         composable(Screens.SignUp.screens) { Signup(navController) }
-        composable(Screens.AddNews.screens) { AddNewsScreen(navController) }
+        composable(Screens.AddNews.screens) { AddNewsScreen(navController, viewModel = newsViewModel) }
         composable(Screens.AdminHome.screens,
             arguments = listOf(
                 navArgument("email"){type = NavType.StringType})
