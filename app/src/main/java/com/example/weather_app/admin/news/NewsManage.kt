@@ -2,6 +2,7 @@ package com.example.weather_app.admin.news
 
 import android.graphics.BitmapFactory
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -20,14 +21,17 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -36,6 +40,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -46,38 +51,113 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.example.weather_app.data.news.FirebaseNewsRepository
 import com.example.weather_app.model.News
 import com.example.weather_app.ui.theme.DarkBlueJC
 
 
 @Composable
-fun NewsList(newsList: List<News>, navController: NavHostController){
-    Column {
-        SearchBar()
+fun NewsList(navController: NavHostController) {
+    val firebaseRepository = FirebaseNewsRepository()
 
-        LazyColumn(
-            contentPadding = PaddingValues(horizontal = 10.dp, vertical = 8.dp)
-        ) {
-            items(newsList) { news ->
-                NewCard(news = news)
+    // State for news list, filtered news list, search query, loading status, and selected items
+    var newsList by remember { mutableStateOf(listOf<News>()) }
+    var filteredNewsList by remember { mutableStateOf(listOf<News>()) }
+    var searchQuery by remember { mutableStateOf("") }
+    var isLoading by remember { mutableStateOf(true) }
+    var selectedNews by remember { mutableStateOf(setOf<News>()) } // Set for selected news
+
+    // Fetch the news data
+    LaunchedEffect(Unit) {
+        firebaseRepository.getAllNewsFromFirebase { fetchedNews ->
+            newsList = fetchedNews
+            filteredNewsList = fetchedNews // Initially show all news
+            isLoading = false
+        }
+    }
+
+    // Function to filter the news list based on the search query
+    fun filterNews(query: String) {
+        filteredNewsList = if (query.isEmpty()) {
+            newsList // Show all news if the query is empty
+        } else {
+            newsList.filter { it.title.contains(query, ignoreCase = true) } // Filter by title
+        }
+    }
+
+    // Function to delete selected news
+    fun deleteSelectedNews() {
+        selectedNews.forEach { news ->
+            firebaseRepository.deleteNewsFromFirebase(news.title)
+        }
+        // Remove the deleted news from the local list
+        newsList = newsList.filterNot { selectedNews.contains(it) }
+        filteredNewsList = filteredNewsList.filterNot { selectedNews.contains(it) }
+        selectedNews = setOf() // Clear the selection
+    }
+
+    Column {
+        // Show toolbar with delete button if any cards are selected
+        if (selectedNews.isNotEmpty()) {
+            SelectionToolbar(selectedCount = selectedNews.size, onDelete = { deleteSelectedNews() })
+        }
+
+        // Pass the filter function to SearchBar
+        SearchBar(onQueryChanged = { query ->
+            searchQuery = query
+            filterNews(query)  // Filter news when the query changes
+        })
+
+        if (isLoading) {
+            CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
+        } else {
+            LazyColumn(
+                contentPadding = PaddingValues(horizontal = 10.dp, vertical = 8.dp)
+            ) {
+                // Display filtered news list based on the search query
+                items(filteredNewsList) { news ->
+                    NewCard(
+                        news = news,
+                        isSelected = selectedNews.contains(news),
+                        onLongPress = { selectedNews = selectedNews + news }, // Add to selection
+                        onCancel = { selectedNews = selectedNews - news }, // Remove from selection
+                        onNavigate = { /* Handle navigation, e.g., navController.navigate(...) */ }
+                    )
+                }
             }
         }
     }
 }
 
 @Composable
-fun NewCard(news: News) {
+fun NewCard(
+    news: News,
+    isSelected: Boolean,
+    onLongPress: () -> Unit,
+    onCancel: () -> Unit,
+    onNavigate: () -> Unit
+) {
+    // Detect long-press gestures and invoke the `onLongPress` callback
+    val modifier = Modifier
+        .padding(horizontal = 16.dp, vertical = 10.dp)
+        .fillMaxWidth()
+        .pointerInput(Unit) {
+            detectTapGestures(
+                onLongPress = {
+                    onLongPress() // Select the item
+                }
+            )
+        }
+
     Card(
-        modifier = Modifier
-            .padding(horizontal = 16.dp, vertical = 10.dp)
-            .fillMaxWidth(),
+        modifier = modifier,
         elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
         colors = CardDefaults.cardColors(
-            containerColor = DarkBlueJC
+            containerColor = if (isSelected) Color.Gray else DarkBlueJC // Highlight selected cards
         )
     ) {
         Column {
-            // Check if the thumbnail is not empty and convert it to a Bitmap
+            // If the thumbnail is not empty, convert it to a Bitmap and show it
             if (news.thumbnail.isNotEmpty()) {
                 val bitmap = BitmapFactory.decodeByteArray(news.thumbnail, 0, news.thumbnail.size)
                 Image(
@@ -107,16 +187,40 @@ fun NewCard(news: News) {
                     fontSize = 14.sp
                 )
             }
+
+            if (isSelected) {
+                // Show X (cancel) and arrow (navigate) when the card is selected
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    IconButton(onClick = onCancel) {
+                        Icon(
+                            painter = painterResource(id = android.R.drawable.ic_delete),
+                            contentDescription = "Cancel",
+                            tint = Color.Red
+                        )
+                    }
+                    IconButton(onClick = onNavigate) {
+                        Icon(
+                            painter = painterResource(id = android.R.drawable.ic_menu_more),
+                            contentDescription = "Navigate",
+                            tint = Color.Green
+                        )
+                    }
+                }
+            }
         }
     }
 }
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchBar(
     modifier: Modifier = Modifier,
     placeholder: String = "Search",
-    onQueryChanged: (String) -> Unit = {},
-    onSearchAction: () -> Unit = {}
+    onQueryChanged: (String) -> Unit
 ) {
     var query by remember { mutableStateOf("") }
 
@@ -131,7 +235,7 @@ fun SearchBar(
             value = query,
             onValueChange = { newQuery ->
                 query = newQuery
-                onQueryChanged(newQuery)
+                onQueryChanged(newQuery)  // Pass the updated query back to the parent composable
             },
             placeholder = { Text(text = placeholder) },
             leadingIcon = { Icon(Icons.Filled.Search, contentDescription = "Search") },
@@ -140,13 +244,28 @@ fun SearchBar(
                 keyboardType = KeyboardType.Text,
                 imeAction = ImeAction.Search
             ),
-            keyboardActions = KeyboardActions(
-                onSearch = {
-                    onSearchAction()
-                }
-            ),
             singleLine = true,
             maxLines = 1
         )
+    }
+}
+
+@Composable
+fun SelectionToolbar(selectedCount: Int, onDelete: () -> Unit) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(text = "$selectedCount selected", fontWeight = FontWeight.Bold, fontSize = 18.sp)
+        IconButton(onClick = onDelete) {
+            Icon(
+                painter = painterResource(id = android.R.drawable.ic_menu_delete),
+                contentDescription = "Delete",
+                tint = Color.Red
+            )
+        }
     }
 }

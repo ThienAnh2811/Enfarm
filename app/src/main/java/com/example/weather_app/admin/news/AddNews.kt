@@ -148,9 +148,14 @@ fun AddNewsScreen(navController: NavHostController, viewModel: NewsViewModel = v
                                     desc = desc,
                                     thumbnail = convertBitmapToByteArray(bmp)
                                 )
-                                viewModel.insert(news)
-                                Toast.makeText(context, "News added successfully!", Toast.LENGTH_SHORT).show()
-                                navController.popBackStack()
+
+                                // Call the updated insert method with context and success callback
+                                viewModel.insert(news, context = context) {
+                                    // Show success Toast and navigate back upon successful insertion
+                                    Toast.makeText(context, "News added successfully!", Toast.LENGTH_SHORT).show()
+                                    navController.popBackStack()
+                                }
+
                             } catch (e: Exception) {
                                 Log.e("AddNewsScreen", "Error adding news", e)
                                 Toast.makeText(context, "Error adding news", Toast.LENGTH_SHORT).show()
@@ -174,6 +179,9 @@ fun AddNewsScreen(navController: NavHostController, viewModel: NewsViewModel = v
                     fontSize = 15.sp
                 )
             }
+
+
+
         }
     }
 }

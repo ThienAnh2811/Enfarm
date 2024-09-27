@@ -37,7 +37,7 @@ fun navGraph(navController: NavHostController) {
 
     NavHost(navController = navController, startDestination = Screens.Login.screens) {
         composable(Screens.ManageNews.screens) {
-            NewsList(newsList, navController)
+            NewsList(navController)
         }
         composable(Screens.AdminLogin.screens) {
             AdminLogin(navController = navController)
