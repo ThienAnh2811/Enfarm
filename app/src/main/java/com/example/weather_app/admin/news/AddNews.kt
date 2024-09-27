@@ -174,6 +174,7 @@ fun AddNewsScreen(navController: NavHostController, viewModel: NewsViewModel = v
                     fontSize = 15.sp
                 )
             }
+
         }
     }
 }

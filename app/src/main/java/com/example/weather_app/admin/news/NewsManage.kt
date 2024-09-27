@@ -20,6 +20,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -28,6 +29,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -46,20 +48,53 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.example.weather_app.data.news.FirebaseNewsRepository
 import com.example.weather_app.model.News
 import com.example.weather_app.ui.theme.DarkBlueJC
 
 
 @Composable
 fun NewsList(newsList: List<News>, navController: NavHostController){
+//     val firebaseRepository: FirebaseNewsRepository = FirebaseNewsRepository()
+//    Column {
+//        SearchBar()
+//
+//        LazyColumn(
+//            contentPadding = PaddingValues(horizontal = 10.dp, vertical = 8.dp)
+//        ) {
+//            items(newsList) { news ->
+//                NewCard(news = news)
+//            }
+//        }
+//    }
+    val firebaseRepository = FirebaseNewsRepository()
+
+    // State for news list and loading status
+    var newsList by remember { mutableStateOf(listOf<News>()) }
+    var isLoading by remember { mutableStateOf(true) } // Loading state
+
+    // Fetch the news data
+    LaunchedEffect(Unit) {
+        firebaseRepository.getAllNewsFromFirebase { fetchedNews ->
+            newsList = fetchedNews
+            isLoading = false // Set loading to false after fetching
+        }
+    }
+
     Column {
         SearchBar()
 
-        LazyColumn(
-            contentPadding = PaddingValues(horizontal = 10.dp, vertical = 8.dp)
-        ) {
-            items(newsList) { news ->
-                NewCard(news = news)
+        if (isLoading) {
+            // Display a loading indicator while data is being fetched
+            CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
+        } else {
+            // Show news list when data is available
+            LazyColumn(
+                contentPadding = PaddingValues(horizontal = 10.dp, vertical = 8.dp)
+            ) {
+                items(newsList) { news ->
+                    NewCard(news = news)
+                }
             }
         }
     }

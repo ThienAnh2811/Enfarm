@@ -63,8 +63,6 @@ import com.example.weather_app.ui.theme.screens.Diseases
 import com.example.weather_app.ui.theme.screens.Home
 import com.example.weather_app.model.Screens
 import com.example.weather_app.navigation.navGraph
-
-
 import com.example.weather_app.ui.theme.DarkBlueJC
 import com.example.weather_app.ui.theme.screens.WeatherS
 import com.example.weather_app.ui.theme.Weather_AppTheme
@@ -74,17 +72,17 @@ import com.example.weather_app.ui.theme.screens.News
 import com.example.weather_app.ui.theme.screens.OTP
 import com.example.weather_app.ui.theme.screens.Signup
 import com.example.weather_app.viewmodel.NewsViewModel
+import com.google.firebase.FirebaseApp
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
 
 class MainActivity : ComponentActivity() {
-
-
     @OptIn(ExperimentalComposeUiApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         installSplashScreen()
+        FirebaseApp.initializeApp(this)
         setContent {
 
             Weather_AppTheme {
