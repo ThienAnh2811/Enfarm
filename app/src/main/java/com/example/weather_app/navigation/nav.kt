@@ -12,6 +12,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.example.weather_app.admin.AdminHome
 import com.example.weather_app.admin.AdminLogin
+import com.example.weather_app.admin.knowledge.AddKnowledgeScreen
+import com.example.weather_app.admin.knowledge.KnowledgeList
 import com.example.weather_app.admin.news.AddNewsScreen
 import com.example.weather_app.admin.news.NewsList
 import com.example.weather_app.model.Screens
@@ -24,24 +26,26 @@ import com.example.weather_app.ui.theme.screens.News
 import com.example.weather_app.ui.theme.screens.OTP
 import com.example.weather_app.ui.theme.screens.Signup
 import com.example.weather_app.ui.theme.screens.WeatherS
+import com.example.weather_app.viewmodel.KnowledgeViewModel
 import com.example.weather_app.viewmodel.NewsViewModel
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun navGraph(navController: NavHostController) {
-    // Use viewModel() to obtain the ViewModel instance
     val newsViewModel: NewsViewModel = viewModel()
-
-    // Observe LiveData as Compose state
-    val newsList by newsViewModel.allNews.observeAsState(emptyList())
+    val knowledgeViewModel: KnowledgeViewModel = viewModel()
 
     NavHost(navController = navController, startDestination = Screens.Login.screens) {
         composable(Screens.ManageNews.screens) {
             NewsList(navController)
         }
+        composable(Screens.ManageKnowledge.screens){
+            KnowledgeList(navController)
+        }
         composable(Screens.AdminLogin.screens) {
             AdminLogin(navController = navController)
         }
+
         composable(Screens.Data.screens) {
             Data()
         }
@@ -65,6 +69,9 @@ fun navGraph(navController: NavHostController) {
         }
         composable(Screens.AddNews.screens) {
             AddNewsScreen(navController, viewModel = newsViewModel)
+        }
+        composable(Screens.AddKnowledge.screens){
+            AddKnowledgeScreen(navController, viewModel= knowledgeViewModel)
         }
         composable(
             Screens.AdminHome.screens,

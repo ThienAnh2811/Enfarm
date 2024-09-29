@@ -1,4 +1,4 @@
-package com.example.weather_app.admin.news
+package com.example.weather_app.admin.knowledge
 
 import android.graphics.BitmapFactory
 import androidx.compose.foundation.Image
@@ -15,21 +15,17 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -46,59 +42,57 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.example.weather_app.data.knowledge.FirebaseKnowledgeRepository
 import com.example.weather_app.data.news.FirebaseNewsRepository
+import com.example.weather_app.model.Knowledge
 import com.example.weather_app.model.News
 import com.example.weather_app.ui.theme.DarkBlueJC
 
 
 @Composable
-fun NewsList(navController: NavHostController) {
-    val firebaseRepository = FirebaseNewsRepository()
-
-    var newsList by remember { mutableStateOf(listOf<News>()) }
-    var filteredNewsList by remember { mutableStateOf(listOf<News>()) }
+fun KnowledgeList(navController: NavHostController) {
+    val firebaseRepository = FirebaseKnowledgeRepository()
+    var KnowledgeList by remember { mutableStateOf(listOf<Knowledge>()) }
+    var filteredKnowledgeList by remember { mutableStateOf(listOf<Knowledge>()) }
     var searchQuery by remember { mutableStateOf("") }
     var isLoading by remember { mutableStateOf(true) }
-    var selectedNews by remember { mutableStateOf(setOf<News>()) }
-
+    var selectedKnowledge by remember { mutableStateOf(setOf<Knowledge>()) }
     LaunchedEffect(Unit) {
-        firebaseRepository.getAllNewsFromFirebase { fetchedNews ->
-            newsList = fetchedNews
-            filteredNewsList = fetchedNews
+        firebaseRepository.getAllKnowledgeFromFirebase { fetchedKnowledge ->
+            KnowledgeList = fetchedKnowledge
+            filteredKnowledgeList = fetchedKnowledge
             isLoading = false
         }
     }
 
-    fun filterNews(query: String) {
-        filteredNewsList = if (query.isEmpty()) {
-            newsList
+    fun filterKnowledge(query: String) {
+        filteredKnowledgeList = if (query.isEmpty()) {
+            KnowledgeList
         } else {
-            newsList.filter { it.title.contains(query, ignoreCase = true) }
+            KnowledgeList.filter { it.title.contains(query, ignoreCase = true) }
         }
     }
 
-    fun deleteSelectedNews() {
-        selectedNews.forEach { news ->
-            firebaseRepository.deleteNewsFromFirebase(news.title)
+    fun deleteSelectedKnowledge() {
+        selectedKnowledge.forEach { news ->
+            firebaseRepository.deleteKnowledgeFromFirebase(news.title)
         }
-        newsList = newsList.filterNot { selectedNews.contains(it) }
-        filteredNewsList = filteredNewsList.filterNot { selectedNews.contains(it) }
-        selectedNews = setOf()
+        KnowledgeList = KnowledgeList.filterNot { selectedKnowledge.contains(it) }
+        filteredKnowledgeList = filteredKnowledgeList.filterNot { selectedKnowledge.contains(it) }
+        selectedKnowledge = setOf()
     }
 
     Column {
-        if (selectedNews.isNotEmpty()) {
-            SelectionToolbar(selectedCount = selectedNews.size, onDelete = { deleteSelectedNews() })
+        if (selectedKnowledge.isNotEmpty()) {
+            SelectionToolbar(selectedCount = selectedKnowledge.size, onDelete = { deleteSelectedKnowledge() })
         }
 
         SearchBar(onQueryChanged = { query ->
             searchQuery = query
-            filterNews(query)
+            filterKnowledge(query)
         })
 
         if (isLoading) {
@@ -107,13 +101,13 @@ fun NewsList(navController: NavHostController) {
             LazyColumn(
                 contentPadding = PaddingValues(horizontal = 10.dp, vertical = 8.dp)
             ) {
-                items(filteredNewsList) { news ->
-                    NewCard(
-                        news = news,
-                        isSelected = selectedNews.contains(news),
-                        onLongPress = { selectedNews = selectedNews + news },
-                        onCancel = { selectedNews = selectedNews - news },
-                        onNavigate = {  }
+                items(filteredKnowledgeList) { knowledge ->
+                    KnowledgeCard(
+                        knowledge = knowledge,
+                        isSelected = selectedKnowledge.contains(knowledge),
+                        onLongPress = { selectedKnowledge = selectedKnowledge + knowledge },
+                        onCancel = { selectedKnowledge = selectedKnowledge - knowledge },
+                        onNavigate = { }
                     )
                 }
             }
@@ -122,14 +116,13 @@ fun NewsList(navController: NavHostController) {
 }
 
 @Composable
-fun NewCard(
-    news: News,
+fun KnowledgeCard(
+    knowledge: Knowledge,
     isSelected: Boolean,
     onLongPress: () -> Unit,
     onCancel: () -> Unit,
     onNavigate: () -> Unit,
 ) {
-    // Detect long-press gestures and invoke the `onLongPress` callback
     val modifier = Modifier
         .padding(horizontal = 16.dp, vertical = 10.dp)
         .fillMaxWidth()
@@ -145,13 +138,12 @@ fun NewCard(
         modifier = modifier,
         elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
         colors = CardDefaults.cardColors(
-            containerColor = if (isSelected) Color.Gray else DarkBlueJC // Highlight selected cards
+            containerColor = if (isSelected) Color.Gray else DarkBlueJC
         )
     ) {
         Column {
-            // If the thumbnail is not empty, convert it to a Bitmap and show it
-            if (news.thumbnail.isNotEmpty()) {
-                val bitmap = BitmapFactory.decodeByteArray(news.thumbnail, 0, news.thumbnail.size)
+            if (knowledge.thumbnail.isNotEmpty()) {
+                val bitmap = BitmapFactory.decodeByteArray(knowledge.thumbnail, 0, knowledge.thumbnail.size)
                 Image(
                     bitmap = bitmap.asImageBitmap(),
                     contentDescription = null,
@@ -167,14 +159,14 @@ fun NewCard(
                     .padding(10.dp)
             ) {
                 Text(
-                    text = news.title,
+                    text = knowledge.title,
                     color = Color.White,
                     fontWeight = FontWeight.Bold,
                     fontSize = 18.sp
                 )
                 Spacer(modifier = Modifier.height(6.dp))
                 Text(
-                    text = news.desc,
+                    text = knowledge.desc,
                     color = Color.White,
                     fontSize = 14.sp
                 )
@@ -227,7 +219,7 @@ fun SearchBar(
             value = query,
             onValueChange = { newQuery ->
                 query = newQuery
-                onQueryChanged(newQuery)
+                onQueryChanged(newQuery)  // Pass the updated query back to the parent composable
             },
             placeholder = { Text(text = placeholder) },
             leadingIcon = { Icon(Icons.Filled.Search, contentDescription = "Search") },

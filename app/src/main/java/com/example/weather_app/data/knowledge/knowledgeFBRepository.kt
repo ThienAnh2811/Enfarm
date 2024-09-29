@@ -1,79 +1,71 @@
-package com.example.weather_app.data.news
+package com.example.weather_app.data.knowledge
+
 import android.content.Context
 import android.util.Base64
 import android.util.Log
 import android.widget.Toast
+import com.example.weather_app.model.FirebaseKnowledge
 import com.example.weather_app.model.FirebaseNews
+import com.example.weather_app.model.Knowledge
 import com.example.weather_app.model.News
-import com.google.firebase.Firebase
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
-import com.google.firebase.database.database
 
-
-class FirebaseNewsRepository {
+class FirebaseKnowledgeRepository {
     private val database: FirebaseDatabase = FirebaseDatabase.getInstance()
-    private val newsReference: DatabaseReference = database.getReference("News")
+    private val knowledgeReference: DatabaseReference = database.getReference("Knowledge")
 
-    // Convert ByteArray to Base64 String
     fun byteArrayToBase64(byteArray: ByteArray): String {
         return Base64.encodeToString(byteArray, Base64.DEFAULT)
     }
 
-    // Convert Base64 String to ByteArray
     fun base64ToByteArray(base64String: String): ByteArray {
         return Base64.decode(base64String, Base64.DEFAULT)
     }
 
-    // Get all news from Firebase and decode thumbnail from Base64 to ByteArray
-    fun getAllNewsFromFirebase(callback: (List<News>) -> Unit) {
-        newsReference.get()
+    fun getAllKnowledgeFromFirebase(callback: (List<Knowledge>) -> Unit) {
+        knowledgeReference.get()
             .addOnSuccessListener { dataSnapshot ->
-                val newsList = mutableListOf<News>()
+                val KnowledgeList = mutableListOf<Knowledge>()
                 for (snapshot in dataSnapshot.children) {
-                    val news = snapshot.getValue(News::class.java)
+                    val news = snapshot.getValue(Knowledge::class.java)
                     news?.let {
-                        // Convert Base64 thumbnail back to ByteArray
                         val byteArrayThumbnail = base64ToByteArray(it.thumbnailBase64)
-                        newsList.add(it.copy(thumbnail = byteArrayThumbnail)) // Use ByteArray locally
+                        KnowledgeList.add(it.copy(thumbnail = byteArrayThumbnail))
                     }
                 }
-                callback(newsList)
+                callback(KnowledgeList)
             }
             .addOnFailureListener { exception ->
                 Log.e("FirebaseSync", "Error getting news from Firebase: ${exception.message}", exception)
             }
     }
 
-    // Insert or update news in Firebase with detailed logging
-    fun insertOrUpdateNewsInFirebase(news: News, context: Context, onSuccess: () -> Unit) {
-        val base64Thumbnail = byteArrayToBase64(news.thumbnail)
+    fun insertOrUpdateKnowledgeInFirebase(knowledge: Knowledge, context: Context, onSuccess: () -> Unit) {
+        val base64Thumbnail = byteArrayToBase64(knowledge.thumbnail)
 
-        val query = newsReference.orderByChild("title").equalTo(news.title)
+        val query = knowledgeReference.orderByChild("title").equalTo(knowledge.title)
 
         query.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 if (dataSnapshot.exists()) {
-                    // Show a Toast indicating duplicate title found
                     Toast.makeText(context, "News with this title already exists", Toast.LENGTH_SHORT).show()
                 } else {
-                    // No duplicate found, proceed with insertion
-                    val firebaseNews = FirebaseNews(
-                        id = news.id,
-                        title = news.title,
-                        desc = news.desc,
+                    val firebaseknowledge = FirebaseKnowledge(
+                        id = knowledge.id,
+                        title = knowledge.title,
+                        desc = knowledge.desc,
                         thumbnailBase64 = base64Thumbnail
                     )
 
-                    // If ID is 0, generate a new key in Firebase
-                    val newsRef = if (news.id == 0) newsReference.push() else newsReference.child(news.id.toString())
+                    val knlRef = if (knowledge.id == 0) knowledgeReference.push() else knowledgeReference.child(knowledge.id.toString())
 
-                    newsRef.setValue(firebaseNews)
+                    knlRef.setValue(firebaseknowledge)
                         .addOnSuccessListener {
-                            Log.d("FirebaseSync", "News synced successfully with ID: ${newsRef.key}")
+                            Log.d("FirebaseSync", "Knowledge synced successfully with ID: ${knlRef.key}")
                             // Call the success callback to notify the insertion was successful
                             onSuccess()
                         }
@@ -91,22 +83,18 @@ class FirebaseNewsRepository {
 
 
 
-    fun deleteNewsFromFirebase(newstitle: String) {
-        // Query the database to find the news item with the given title
-        val query = newsReference.orderByChild("title").equalTo(newstitle)
+    fun deleteKnowledgeFromFirebase(knowledgestitle: String) {
+        val query = knowledgeReference.orderByChild("title").equalTo(knowledgestitle)
 
         query.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
-                // Check if data exists
                 if (dataSnapshot.exists()) {
                     for (newsSnapshot in dataSnapshot.children) {
-                        // Get the key of the entry to be deleted
                         val newsKey = newsSnapshot.key
                         if (newsKey != null) {
-                            // Remove the entry from Firebase
-                            newsReference.child(newsKey).removeValue()
+                            knowledgeReference.child(newsKey).removeValue()
                                 .addOnSuccessListener {
-                                    Log.d("FirebaseSync", "News deleted successfully with title: $newstitle")
+                                    Log.d("FirebaseSync", "Knowledge deleted successfully with title: $knowledgestitle")
                                 }
                                 .addOnFailureListener { e ->
                                     Log.e("FirebaseSync", "Error deleting news: ${e.message}", e)
@@ -114,7 +102,7 @@ class FirebaseNewsRepository {
                         }
                     }
                 } else {
-                    Log.d("FirebaseSync", "No news found with the title: $newstitle")
+                    Log.d("FirebaseSync", "No news found with the title: $knowledgestitle")
                 }
             }
 

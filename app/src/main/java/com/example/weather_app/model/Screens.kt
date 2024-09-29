@@ -19,6 +19,8 @@ sealed class Screens(val screens: String) {
     data object AdminLogin: Screens("AdminLogin")
     data object AddNews: Screens("AddNews")
     data object ManageNews: Screens("ManageNews")
+    data object AddKnowledge: Screens("AddKnowledge")
+    data object ManageKnowledge: Screens("ManageKnowledge")
     data object AdminHome: Screens("AdminHome/{email}"){
         fun createRoute(navController: NavHostController,
                         email: String)="AdminHome/$email"
