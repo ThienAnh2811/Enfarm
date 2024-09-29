@@ -60,45 +60,52 @@ import com.example.weather_app.ui.theme.DarkBlueJC
 fun NewsList(navController: NavHostController) {
     val firebaseRepository = FirebaseNewsRepository()
 
+    // State for news list, filtered news list, search query, loading status, and selected items
     var newsList by remember { mutableStateOf(listOf<News>()) }
     var filteredNewsList by remember { mutableStateOf(listOf<News>()) }
     var searchQuery by remember { mutableStateOf("") }
     var isLoading by remember { mutableStateOf(true) }
-    var selectedNews by remember { mutableStateOf(setOf<News>()) }
+    var selectedNews by remember { mutableStateOf(setOf<News>()) } // Set for selected news
 
+    // Fetch the news data
     LaunchedEffect(Unit) {
         firebaseRepository.getAllNewsFromFirebase { fetchedNews ->
             newsList = fetchedNews
-            filteredNewsList = fetchedNews
+            filteredNewsList = fetchedNews // Initially show all news
             isLoading = false
         }
     }
 
+    // Function to filter the news list based on the search query
     fun filterNews(query: String) {
         filteredNewsList = if (query.isEmpty()) {
-            newsList
+            newsList // Show all news if the query is empty
         } else {
-            newsList.filter { it.title.contains(query, ignoreCase = true) }
+            newsList.filter { it.title.contains(query, ignoreCase = true) } // Filter by title
         }
     }
 
+    // Function to delete selected news
     fun deleteSelectedNews() {
         selectedNews.forEach { news ->
             firebaseRepository.deleteNewsFromFirebase(news.title)
         }
+        // Remove the deleted news from the local list
         newsList = newsList.filterNot { selectedNews.contains(it) }
         filteredNewsList = filteredNewsList.filterNot { selectedNews.contains(it) }
-        selectedNews = setOf()
+        selectedNews = setOf() // Clear the selection
     }
 
     Column {
+        // Show toolbar with delete button if any cards are selected
         if (selectedNews.isNotEmpty()) {
             SelectionToolbar(selectedCount = selectedNews.size, onDelete = { deleteSelectedNews() })
         }
 
+        // Pass the filter function to SearchBar
         SearchBar(onQueryChanged = { query ->
             searchQuery = query
-            filterNews(query)
+            filterNews(query)  // Filter news when the query changes
         })
 
         if (isLoading) {
@@ -107,13 +114,14 @@ fun NewsList(navController: NavHostController) {
             LazyColumn(
                 contentPadding = PaddingValues(horizontal = 10.dp, vertical = 8.dp)
             ) {
+                // Display filtered news list based on the search query
                 items(filteredNewsList) { news ->
                     NewCard(
                         news = news,
                         isSelected = selectedNews.contains(news),
-                        onLongPress = { selectedNews = selectedNews + news },
-                        onCancel = { selectedNews = selectedNews - news },
-                        onNavigate = {  }
+                        onLongPress = { selectedNews = selectedNews + news }, // Add to selection
+                        onCancel = { selectedNews = selectedNews - news }, // Remove from selection
+                        onNavigate = { /* Handle navigation, e.g., navController.navigate(...) */ }
                     )
                 }
             }
@@ -127,7 +135,7 @@ fun NewCard(
     isSelected: Boolean,
     onLongPress: () -> Unit,
     onCancel: () -> Unit,
-    onNavigate: () -> Unit,
+    onNavigate: () -> Unit
 ) {
     // Detect long-press gestures and invoke the `onLongPress` callback
     val modifier = Modifier
@@ -136,7 +144,7 @@ fun NewCard(
         .pointerInput(Unit) {
             detectTapGestures(
                 onLongPress = {
-                    onLongPress()
+                    onLongPress() // Select the item
                 }
             )
         }
@@ -227,7 +235,7 @@ fun SearchBar(
             value = query,
             onValueChange = { newQuery ->
                 query = newQuery
-                onQueryChanged(newQuery)
+                onQueryChanged(newQuery)  // Pass the updated query back to the parent composable
             },
             placeholder = { Text(text = placeholder) },
             leadingIcon = { Icon(Icons.Filled.Search, contentDescription = "Search") },

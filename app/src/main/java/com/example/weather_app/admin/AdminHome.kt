@@ -4,7 +4,6 @@ import android.widget.ImageButton
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -22,8 +21,6 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.AddCard
-import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.Book
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Cloud
@@ -67,89 +64,91 @@ import com.example.weather_app.ui.theme.BlueJC
 import com.example.weather_app.ui.theme.WeatherCard
 import kotlinx.coroutines.launch
 
-//@Composable
-//fun AdminHome(navController: NavHostController, email: String) {
-//    Column(modifier = Modifier
-//        .fillMaxWidth()
-//        .fillMaxHeight()
-//    , horizontalAlignment = Alignment.CenterHorizontally,
-//        verticalArrangement = Arrangement.Top) {
-//            Text(text = "App Manage",
-//                fontSize = 50.sp,
-//                color = BlueJC,
-//                fontWeight = FontWeight.Bold)
-//            Spacer(modifier = Modifier.height(20.dp))
-//            Row(Modifier.padding(10.dp)
-//                .fillMaxWidth(),
-//                horizontalArrangement = Arrangement.SpaceEvenly,
-//                verticalAlignment = Alignment.CenterVertically) {
-//                Column{
-//                    Text(text = "News", fontSize = 30.sp)
-//                    Text(text = "Knowledge", fontSize = 30.sp)
-//                }
-//                Column{
-//
-//                    IconButton(
-//                        onClick = { navController.navigate(Screens.AddNews.screens) },
-//                        modifier = Modifier.size(30.dp)
-//
-//                    ) {
-//                        Icon(
-//                            imageVector = Icons.Filled.Add,
-//                            contentDescription = "Add",
-//                            modifier = Modifier.size(25.dp)
-//                                .background(BlueJC)
-//                        )
-//                    }
-//                    Spacer(modifier = Modifier.height(10.dp))
-//                    IconButton(
-//                        onClick = {  },
-//                        modifier = Modifier.size(30.dp),
-//                    ) {
-//                        Icon(
-//                            imageVector = Icons.Filled.Add,
-//                            contentDescription = "Add",
-//                            modifier = Modifier.size(25.dp)
-//                                .background(BlueJC)
-//                        )
-//                    }
-//                }
-//                Column{
-//
-//                    IconButton(
-//                        onClick = {
-//                            navController.navigate(Screens.ManageNews.screens)
-//                        },
-//                        modifier = Modifier.size(30.dp)
-//
-//                    ) {
-//                        Icon(
-//                            imageVector = Icons.Filled.ManageSearch,
-//                            contentDescription = "Add",
-//                            modifier = Modifier.size(25.dp)
-//                                .background(BlueJC)
-//                        )
-//                    }
-//                    Spacer(modifier = Modifier.height(10.dp))
-//                    IconButton(
-//                        onClick = {  },
-//                        modifier = Modifier.size(30.dp),
-//                    ) {
-//                        Icon(
-//                            imageVector = Icons.Filled.ManageSearch,
-//                            contentDescription = "Add",
-//                            modifier = Modifier.size(25.dp)
-//                                .background(BlueJC)
-//                        )
-//                    }
-//                }
-//            }
-//    }
-//}
+@Composable
+fun AdminHome(navController: NavHostController, email: String) {
+    Column(modifier = Modifier
+        .fillMaxWidth()
+        .fillMaxHeight()
+    , horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Top) {
+            Text(text = "App Manage",
+                fontSize = 50.sp,
+                color = BlueJC,
+                fontWeight = FontWeight.Bold)
+            Spacer(modifier = Modifier.height(20.dp))
+            Row(Modifier.padding(10.dp)
+                .fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceEvenly,
+                verticalAlignment = Alignment.CenterVertically) {
+                Column{
+                    Text(text = "News", fontSize = 30.sp)
+                    Text(text = "Knowledge", fontSize = 30.sp)
+                }
+                Column{
+
+                    IconButton(
+                        onClick = { navController.navigate(Screens.AddNews.screens) },
+                        modifier = Modifier.size(30.dp)
+
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.Add,
+                            contentDescription = "Add",
+                            modifier = Modifier.size(25.dp)
+                                .background(BlueJC)
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(10.dp))
+                    IconButton(
+                        onClick = {  },
+                        modifier = Modifier.size(30.dp),
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.Add,
+                            contentDescription = "Add",
+                            modifier = Modifier.size(25.dp)
+                                .background(BlueJC)
+                        )
+                    }
+                }
+                Column{
+
+                    IconButton(
+                        onClick = {
+                            navController.navigate(Screens.ManageNews.screens)
+                        },
+                        modifier = Modifier.size(30.dp)
+
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.ManageSearch,
+                            contentDescription = "Add",
+                            modifier = Modifier.size(25.dp)
+                                .background(BlueJC)
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(10.dp))
+                    IconButton(
+                        onClick = {  },
+                        modifier = Modifier.size(30.dp),
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.ManageSearch,
+                            contentDescription = "Add",
+                            modifier = Modifier.size(25.dp)
+                                .background(BlueJC)
+                        )
+                    }
+                }
+            }
+    }
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
+@Preview(showBackground = true,
+    showSystemUi = true)
 @Composable
-fun AdminHome(navController: NavHostController, email: String){
+fun Home(){
     Scaffold(topBar = {
 
             TopAppBar(
@@ -164,8 +163,8 @@ fun AdminHome(navController: NavHostController, email: String){
             paddingValues -> Column(
                 modifier = Modifier.padding(paddingValues)
         ) {
-            NewsCard(navController)
-            KnowledgeCard(navController)
+            NewsCard()
+            KnowledgeCard()
         }
 
     }
@@ -174,14 +173,13 @@ fun AdminHome(navController: NavHostController, email: String){
 
 
 @Composable
-fun NewsCard(navController: NavHostController) {
+fun NewsCard(){
     Card(
         shape = RoundedCornerShape(16.dp),
         modifier = Modifier
             .height(280.dp) // Adjust the size to match the image proportions
             .padding(10.dp)
-            .fillMaxWidth()
-            .clickable { /* Handle card click if needed */ },
+            .fillMaxWidth(),
         colors = CardDefaults.cardColors(
             containerColor = BlueJC
         ),
@@ -200,15 +198,22 @@ fun NewsCard(navController: NavHostController) {
                         modifier = Modifier
                             .size(120.dp)
                             .background(Color(0xFFB2FF59), shape = RoundedCornerShape(4.dp))
-                    ) {
+                    ){
                         Icon(
-                            imageVector = Icons.Default.Newspaper,
-                            contentDescription = "Worklist Icon",
-                            tint = Color.Black, // Same green color
-                            modifier = Modifier.size(100.dp)
-                        )
+                        imageVector = Icons.Default.Newspaper,
+                        contentDescription = "Worklist Icon",
+                        tint = Color.Black, // Same green color
+                        modifier = Modifier.size(100.dp)
+                    )
                     }
                     Spacer(modifier = Modifier.width(4.dp))
+                    // Icon next to the text
+//                    Icon(
+//                        imageVector = Icons.Default.CheckCircle,
+//                        contentDescription = "Worklist Icon",
+//                        tint = Color(0xFFB2FF59), // Same green color
+//                        modifier = Modifier.size(16.dp)
+//                    )
                 }
                 Spacer(modifier = Modifier.height(8.dp))
                 // Text below the square
@@ -219,39 +224,19 @@ fun NewsCard(navController: NavHostController) {
                 )
             }
             // Number in the bottom right corner
-//            Text(
-//                text = "6",
-//                color = Color.White,
-//                fontSize = 24.sp,
-//                fontWeight = FontWeight.Bold,
-//                modifier = Modifier.align(Alignment.BottomEnd)
-//            )
-            Icon(
-                imageVector = Icons.Default.AddCard,
-                contentDescription = "",
-                modifier = Modifier
-                    .align(Alignment.BottomStart)
-                    .size(40.dp)
-                    .clickable {
-                        navController.navigate(Screens.AddNews.screens)
-                    }
-            )
-            Icon(
-                imageVector = Icons.Default.ManageSearch,
-                contentDescription = "",
-                modifier = Modifier
-                    .align(Alignment.BottomEnd)
-                    .size(40.dp)
-                    .clickable {
-                        navController.navigate(Screens.ManageNews.screens)
-                    }
+            Text(
+                text = "6",
+                color = Color.White,
+                fontSize = 24.sp,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.align(Alignment.BottomEnd)
             )
         }
     }
 }
 
 @Composable
-fun KnowledgeCard(navController: NavHostController){
+fun KnowledgeCard(){
     Card(
         shape = RoundedCornerShape(16.dp),
         modifier = Modifier
@@ -302,21 +287,13 @@ fun KnowledgeCard(navController: NavHostController){
                     fontSize = 30.sp
                 )
             }
-            Icon(imageVector = Icons.Default.AddCard,
-                contentDescription = "",
-                modifier = Modifier.align(Alignment.BottomStart)
-                    .size(40.dp)
-                    .clickable {
-                        navController.navigate(Screens.AddKnowledge.screens)
-                    },
-            )
-            Icon(imageVector = Icons.Default.ManageSearch,
-                contentDescription = "",
+            // Number in the bottom right corner
+            Text(
+                text = "6",
+                color = Color.White,
+                fontSize = 24.sp,
+                fontWeight = FontWeight.Bold,
                 modifier = Modifier.align(Alignment.BottomEnd)
-                    .size(40.dp)
-                    .clickable {
-                        navController.navigate(Screens.ManageKnowledge.screens)
-                    },
             )
         }
     }
