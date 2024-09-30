@@ -13,3 +13,4 @@ val Pink40 = Color(0xFF7D5260)
 
 val BlueJC = Color(0xFF3DC6F6)
 val DarkBlueJC = Color(0xFF145DA0)
+val GreenJC = Color(0xFFCEFDD)

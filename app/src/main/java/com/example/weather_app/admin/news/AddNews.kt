@@ -148,10 +148,7 @@ fun AddNewsScreen(navController: NavHostController, viewModel: NewsViewModel = v
                                     desc = desc,
                                     thumbnail = convertBitmapToByteArray(bmp)
                                 )
-
-                                // Call the updated insert method with context and success callback
                                 viewModel.insert(news, context = context) {
-                                    // Show success Toast and navigate back upon successful insertion
                                     Toast.makeText(context, "News added successfully!", Toast.LENGTH_SHORT).show()
                                     navController.popBackStack()
                                 }

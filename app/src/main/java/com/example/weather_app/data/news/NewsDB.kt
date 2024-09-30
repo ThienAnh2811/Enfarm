@@ -8,7 +8,6 @@ import com.example.weather_app.data.knowledge.knowledgeDAO
 import com.example.weather_app.model.Knowledge
 import com.example.weather_app.model.News
 
-// Your Room Database definition including two entities: News and Knowledge
 @Database(entities = [News::class, Knowledge::class], version = 2, exportSchema = false)
 abstract class newsDB: RoomDatabase() {
     abstract fun newsDAO(): newsDAO
