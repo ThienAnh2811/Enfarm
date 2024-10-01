@@ -18,17 +18,14 @@ class FirebaseNewsRepository {
     private val database: FirebaseDatabase = FirebaseDatabase.getInstance()
     private val newsReference: DatabaseReference = database.getReference("News")
 
-    // Convert ByteArray to Base64 String
     fun byteArrayToBase64(byteArray: ByteArray): String {
         return Base64.encodeToString(byteArray, Base64.DEFAULT)
     }
 
-    // Convert Base64 String to ByteArray
     fun base64ToByteArray(base64String: String): ByteArray {
         return Base64.decode(base64String, Base64.DEFAULT)
     }
 
-    // Get all news from Firebase and decode thumbnail from Base64 to ByteArray
     fun getAllNewsFromFirebase(callback: (List<News>) -> Unit) {
         newsReference.get()
             .addOnSuccessListener { dataSnapshot ->
@@ -36,9 +33,8 @@ class FirebaseNewsRepository {
                 for (snapshot in dataSnapshot.children) {
                     val news = snapshot.getValue(News::class.java)
                     news?.let {
-                        // Convert Base64 thumbnail back to ByteArray
                         val byteArrayThumbnail = base64ToByteArray(it.thumbnailBase64)
-                        newsList.add(it.copy(thumbnail = byteArrayThumbnail)) // Use ByteArray locally
+                        newsList.add(it.copy(thumbnail = byteArrayThumbnail))
                     }
                 }
                 callback(newsList)
@@ -48,7 +44,6 @@ class FirebaseNewsRepository {
             }
     }
 
-    // Insert or update news in Firebase with detailed logging
     fun insertOrUpdateNewsInFirebase(news: News, context: Context, onSuccess: () -> Unit) {
         val base64Thumbnail = byteArrayToBase64(news.thumbnail)
 
@@ -57,10 +52,8 @@ class FirebaseNewsRepository {
         query.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 if (dataSnapshot.exists()) {
-                    // Show a Toast indicating duplicate title found
                     Toast.makeText(context, "News with this title already exists", Toast.LENGTH_SHORT).show()
                 } else {
-                    // No duplicate found, proceed with insertion
                     val firebaseNews = FirebaseNews(
                         id = news.id,
                         title = news.title,
@@ -68,7 +61,6 @@ class FirebaseNewsRepository {
                         thumbnailBase64 = base64Thumbnail
                     )
 
-                    // If ID is 0, generate a new key in Firebase
                     val newsRef = if (news.id == 0) newsReference.push() else newsReference.child(news.id.toString())
 
                     newsRef.setValue(firebaseNews)
@@ -92,18 +84,14 @@ class FirebaseNewsRepository {
 
 
     fun deleteNewsFromFirebase(newstitle: String) {
-        // Query the database to find the news item with the given title
         val query = newsReference.orderByChild("title").equalTo(newstitle)
 
         query.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
-                // Check if data exists
                 if (dataSnapshot.exists()) {
                     for (newsSnapshot in dataSnapshot.children) {
-                        // Get the key of the entry to be deleted
                         val newsKey = newsSnapshot.key
                         if (newsKey != null) {
-                            // Remove the entry from Firebase
                             newsReference.child(newsKey).removeValue()
                                 .addOnSuccessListener {
                                     Log.d("FirebaseSync", "News deleted successfully with title: $newstitle")
@@ -123,4 +111,31 @@ class FirebaseNewsRepository {
             }
         })
     }
+    fun getNewsByTitle(title: String, callback: (News?) -> Unit) {
+        val query = newsReference.orderByChild("title").equalTo(title)
+
+        query.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    for (newsSnapshot in dataSnapshot.children) {
+                        val news = newsSnapshot.getValue(News::class.java)
+                        news?.let {
+                            val byteArrayThumbnail = base64ToByteArray(it.thumbnailBase64)
+                            callback(it.copy(thumbnail = byteArrayThumbnail))
+                            return
+                        }
+                    }
+                } else {
+                    Log.d("FirebaseSync", "No news found with the title: $title")
+                    callback(null)
+                }
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+                Log.e("FirebaseSync", "Error querying news by title: ${databaseError.message}")
+                callback(null)
+            }
+        })
+    }
+
 }

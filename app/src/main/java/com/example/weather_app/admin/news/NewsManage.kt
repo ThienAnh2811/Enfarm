@@ -59,53 +59,45 @@ import com.example.weather_app.ui.theme.DarkBlueJC
 @Composable
 fun NewsList(navController: NavHostController) {
     val firebaseRepository = FirebaseNewsRepository()
-
-    // State for news list, filtered news list, search query, loading status, and selected items
     var newsList by remember { mutableStateOf(listOf<News>()) }
     var filteredNewsList by remember { mutableStateOf(listOf<News>()) }
     var searchQuery by remember { mutableStateOf("") }
     var isLoading by remember { mutableStateOf(true) }
-    var selectedNews by remember { mutableStateOf(setOf<News>()) } // Set for selected news
+    var selectedNews by remember { mutableStateOf(setOf<News>()) }
 
-    // Fetch the news data
     LaunchedEffect(Unit) {
         firebaseRepository.getAllNewsFromFirebase { fetchedNews ->
             newsList = fetchedNews
-            filteredNewsList = fetchedNews // Initially show all news
+            filteredNewsList = fetchedNews
             isLoading = false
         }
     }
 
-    // Function to filter the news list based on the search query
     fun filterNews(query: String) {
         filteredNewsList = if (query.isEmpty()) {
-            newsList // Show all news if the query is empty
+            newsList
         } else {
-            newsList.filter { it.title.contains(query, ignoreCase = true) } // Filter by title
+            newsList.filter { it.title.contains(query, ignoreCase = true) }
         }
     }
 
-    // Function to delete selected news
     fun deleteSelectedNews() {
         selectedNews.forEach { news ->
             firebaseRepository.deleteNewsFromFirebase(news.title)
         }
-        // Remove the deleted news from the local list
         newsList = newsList.filterNot { selectedNews.contains(it) }
         filteredNewsList = filteredNewsList.filterNot { selectedNews.contains(it) }
-        selectedNews = setOf() // Clear the selection
+        selectedNews = setOf()
     }
 
     Column {
-        // Show toolbar with delete button if any cards are selected
         if (selectedNews.isNotEmpty()) {
             SelectionToolbar(selectedCount = selectedNews.size, onDelete = { deleteSelectedNews() })
         }
 
-        // Pass the filter function to SearchBar
         SearchBar(onQueryChanged = { query ->
             searchQuery = query
-            filterNews(query)  // Filter news when the query changes
+            filterNews(query)
         })
 
         if (isLoading) {
@@ -114,14 +106,13 @@ fun NewsList(navController: NavHostController) {
             LazyColumn(
                 contentPadding = PaddingValues(horizontal = 10.dp, vertical = 8.dp)
             ) {
-                // Display filtered news list based on the search query
                 items(filteredNewsList) { news ->
                     NewCard(
                         news = news,
                         isSelected = selectedNews.contains(news),
-                        onLongPress = { selectedNews = selectedNews + news }, // Add to selection
-                        onCancel = { selectedNews = selectedNews - news }, // Remove from selection
-                        onNavigate = { /* Handle navigation, e.g., navController.navigate(...) */ }
+                        onLongPress = { selectedNews = selectedNews + news },
+                        onCancel = { selectedNews = selectedNews - news },
+                        onNavigate = { }
                     )
                 }
             }
@@ -137,14 +128,13 @@ fun NewCard(
     onCancel: () -> Unit,
     onNavigate: () -> Unit
 ) {
-    // Detect long-press gestures and invoke the `onLongPress` callback
     val modifier = Modifier
         .padding(horizontal = 16.dp, vertical = 10.dp)
         .fillMaxWidth()
         .pointerInput(Unit) {
             detectTapGestures(
                 onLongPress = {
-                    onLongPress() // Select the item
+                    onLongPress()
                 }
             )
         }
@@ -153,11 +143,10 @@ fun NewCard(
         modifier = modifier,
         elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
         colors = CardDefaults.cardColors(
-            containerColor = if (isSelected) Color.Gray else DarkBlueJC // Highlight selected cards
+            containerColor = if (isSelected) Color.Gray else DarkBlueJC
         )
     ) {
         Column {
-            // If the thumbnail is not empty, convert it to a Bitmap and show it
             if (news.thumbnail.isNotEmpty()) {
                 val bitmap = BitmapFactory.decodeByteArray(news.thumbnail, 0, news.thumbnail.size)
                 Image(

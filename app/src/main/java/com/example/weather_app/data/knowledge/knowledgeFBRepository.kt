@@ -111,4 +111,30 @@ class FirebaseKnowledgeRepository {
             }
         })
     }
+    fun getKnowledgeByTitle(title: String, callback: (Knowledge?) -> Unit) {
+        val query = knowledgeReference.orderByChild("title").equalTo(title)
+
+        query.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    for (newsSnapshot in dataSnapshot.children) {
+                        val knowledge = newsSnapshot.getValue(Knowledge::class.java)
+                        knowledge?.let {
+                            val byteArrayThumbnail = base64ToByteArray(it.thumbnailBase64)
+                            callback(it.copy(thumbnail = byteArrayThumbnail))
+                            return
+                        }
+                    }
+                } else {
+                    Log.d("FirebaseSync", "No news found with the title: $title")
+                    callback(null)
+                }
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+                Log.e("FirebaseSync", "Error querying news by title: ${databaseError.message}")
+                callback(null)
+            }
+        })
+    }
 }

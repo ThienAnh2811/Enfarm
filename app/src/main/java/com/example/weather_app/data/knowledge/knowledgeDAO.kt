@@ -8,6 +8,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
 import com.example.weather_app.model.Knowledge
+import com.example.weather_app.model.News
 import com.example.weather_app.model.Screens
 
 @Dao
@@ -24,4 +25,6 @@ interface knowledgeDAO {
     fun getAllKnowledge(): LiveData<List<Knowledge>>
     @Query("select count(*) from knowledge")
     suspend fun getCountKnowledge(): Int
+    @Query("SELECT * FROM knowledge WHERE title = :title")
+    fun getKnowledgeByTitle(title: String): LiveData<Knowledge?>
 }

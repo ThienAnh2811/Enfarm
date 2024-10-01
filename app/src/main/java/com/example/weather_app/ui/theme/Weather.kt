@@ -64,12 +64,11 @@ import com.example.weather_app.viewmodel.WeatherViewModel
 @Composable
 fun WeatherCard(label: String, icon: ImageVector, onClick: () -> Unit){
 
-//    fun WeatherCard(label: String, value: String, icon: ImageVector){
     Card(
 
         modifier = Modifier
             .padding(8.dp)
-            .width(100.dp)
+            .width(130.dp)
             .clickable { onClick() }
             .height(90.dp),
         colors = CardDefaults.cardColors(Color.White),
@@ -88,8 +87,6 @@ fun WeatherCard(label: String, icon: ImageVector, onClick: () -> Unit){
                     tint = DarkBlueJC,
                     modifier = Modifier
                         .size(30.dp))
-//                Spacer(modifier = Modifier.width(4.dp))
-//                Text(text = label, fontSize = 14.sp, color = DarkBlueJC)
             }
             Spacer(modifier = Modifier.height(8.dp))
             Box(modifier = Modifier

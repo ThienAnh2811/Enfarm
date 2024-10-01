@@ -9,6 +9,14 @@ sealed class Screens(val screens: String) {
         fun createRoute(navController: NavHostController,
                         email: String)="Home/$email"
     }
+    data object NewsDetail: Screens("NewsDetail/{title}"){
+        fun createRoute(navController: NavHostController,
+                        title: String)="NewsDetail/$title"
+    }
+    data object KnowledgeDetail: Screens("KnowledgeDetail/{title}"){
+        fun createRoute(navController: NavHostController,
+                        title: String)="KnowledgeDetail/$title"
+    }
     data object Data: Screens("Data")
     data object Diseases: Screens("Diseases")
     data object Weather: Screens("Weather")

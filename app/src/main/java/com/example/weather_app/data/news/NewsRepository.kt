@@ -25,4 +25,10 @@ class newsRepository(private val newsDAO: newsDAO) {
     {
         newsDAO.update(news)
     }
+    fun getLatestNews(): LiveData<List<News>> {
+        return newsDAO.getLatestNews()
+    }
+    fun getNewByTitle(title: String): LiveData<News?>{
+        return newsDAO.getNewsByTitle(title)
+    }
 }

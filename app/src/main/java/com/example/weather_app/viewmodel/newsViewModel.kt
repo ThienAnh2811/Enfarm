@@ -27,6 +27,18 @@ class NewsViewModel(application: Application) : AndroidViewModel(application) {
         allNews = repository.allNews
     }
 
+    val latestNews: LiveData<List<News>> = repository.getLatestNews()
+    private val _newsByTitle = MutableLiveData<News?>()
+    val newsByTitle: LiveData<News?> get() = _newsByTitle
+
+    fun getNewsByTitle(title: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            firebaseRepository.getNewsByTitle(title) { news ->
+                _newsByTitle.postValue(news)
+            }
+        }
+    }
+
     fun getNews(id: Int): LiveData<News?> {
         return repository.getNewsStream(id)
     }
@@ -42,12 +54,8 @@ class NewsViewModel(application: Application) : AndroidViewModel(application) {
 
     fun insert(news: News, context: Context, onSuccess: () -> Unit) = viewModelScope.launch(Dispatchers.IO) {
         try {
-            // Insert into the local Room database
             repository.insertNews(news)
-
-            // Insert into Firebase with Base64-encoded thumbnail and check for duplicate
             firebaseRepository.insertOrUpdateNewsInFirebase(news, context) {
-                // Trigger the onSuccess callback after successful Firebase insert
                 onSuccess()
             }
         } catch (e: Exception) {
@@ -58,14 +66,10 @@ class NewsViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-
     fun update(news: News, context: Context, onSuccess: () -> Unit) = viewModelScope.launch(Dispatchers.IO) {
         try {
-            // Update in the local Room database
             repository.updateNews(news)
-
-            // Update in Firebase
-            firebaseRepository.insertOrUpdateNewsInFirebase(news, context){
+            firebaseRepository.insertOrUpdateNewsInFirebase(news, context) {
                 onSuccess()
             }
         } catch (e: Exception) {
@@ -75,9 +79,7 @@ class NewsViewModel(application: Application) : AndroidViewModel(application) {
 
     fun delete(news: News) = viewModelScope.launch(Dispatchers.IO) {
         try {
-            // Delete from local database
             repository.deleteNews(news)
-            // Delete from Firebase
             firebaseRepository.deleteNewsFromFirebase(news.title)
         } catch (e: Exception) {
             Log.e("NewsViewModel", "Error deleting news", e)

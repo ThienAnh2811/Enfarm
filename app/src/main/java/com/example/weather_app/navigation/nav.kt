@@ -20,12 +20,14 @@ import com.example.weather_app.model.Screens
 import com.example.weather_app.ui.theme.screens.Data
 import com.example.weather_app.ui.theme.screens.Diseases
 import com.example.weather_app.ui.theme.screens.Home
-import com.example.weather_app.ui.theme.screens.Knowledge
 import com.example.weather_app.ui.theme.screens.Login
-import com.example.weather_app.ui.theme.screens.News
+import com.example.weather_app.ui.theme.screens.news.News
 import com.example.weather_app.ui.theme.screens.OTP
 import com.example.weather_app.ui.theme.screens.Signup
 import com.example.weather_app.ui.theme.screens.WeatherS
+import com.example.weather_app.ui.theme.screens.knowledge.Knowledge
+import com.example.weather_app.ui.theme.screens.knowledge.KnowledgeDetailScreen
+import com.example.weather_app.ui.theme.screens.news.NewsDetailScreen
 import com.example.weather_app.viewmodel.KnowledgeViewModel
 import com.example.weather_app.viewmodel.NewsViewModel
 
@@ -56,10 +58,10 @@ fun navGraph(navController: NavHostController) {
             Diseases()
         }
         composable(Screens.News.screens) {
-            News()
+            News(navController, newsViewModel)
         }
-        composable(Screens.Knowledge.screens) {
-            Knowledge()
+        composable(Screens.Knowledge.screens){
+            Knowledge(navController, knodledgeViewModel)
         }
         composable(Screens.Login.screens) {
             Login(navController)
@@ -97,6 +99,22 @@ fun navGraph(navController: NavHostController) {
         ) { navBackStackEntry ->
             val email = navBackStackEntry.arguments?.getString("email")
             Home(navController = navController, email = email!!)
+        }
+        composable(
+            Screens.NewsDetail.screens,
+            arguments = listOf(navArgument("title"){type = NavType.StringType})
+        ){
+            navBackStackEntry ->
+            val title = navBackStackEntry.arguments?.getString("title")
+            NewsDetailScreen(navController= navController, viewModel = newsViewModel, title = title!!)
+        }
+        composable(
+            Screens.KnowledgeDetail.screens,
+            arguments = listOf(navArgument("title"){type = NavType.StringType})
+        ){
+                navBackStackEntry ->
+            val title = navBackStackEntry.arguments?.getString("title")
+            KnowledgeDetailScreen(navController= navController, viewModel = knodledgeViewModel, title = title!!)
         }
     }
 }

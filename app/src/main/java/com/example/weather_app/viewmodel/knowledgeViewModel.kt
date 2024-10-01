@@ -29,6 +29,17 @@ class KnowledgeViewModel(application: Application) : AndroidViewModel(applicatio
         repository = knowledgeRepository(knowledgeDAO)
         allKnowledge = repository.allKnowledge
     }
+    private val _KnowledgeByTitle = MutableLiveData<Knowledge?>()
+    val KnowledgeByTitle: LiveData<Knowledge?> get() = _KnowledgeByTitle
+
+    fun getKnowledgeByTitle(title: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            firebaseRepository.getKnowledgeByTitle(title) { news ->
+                _KnowledgeByTitle.postValue(news)
+            }
+        }
+    }
+
 
     fun getKnowledge(id: Int): LiveData<Knowledge?> {
         return repository.getKnowledgeStream(id)

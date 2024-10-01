@@ -173,7 +173,6 @@ fun KnowledgeCard(
             }
 
             if (isSelected) {
-                // Show X (cancel) and arrow (navigate) when the card is selected
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
@@ -219,7 +218,7 @@ fun SearchBar(
             value = query,
             onValueChange = { newQuery ->
                 query = newQuery
-                onQueryChanged(newQuery)  // Pass the updated query back to the parent composable
+                onQueryChanged(newQuery)
             },
             placeholder = { Text(text = placeholder) },
             leadingIcon = { Icon(Icons.Filled.Search, contentDescription = "Search") },
