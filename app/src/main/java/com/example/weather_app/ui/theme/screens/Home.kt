@@ -300,7 +300,7 @@ fun Home(navController: NavHostController, email: String){
                     .fillMaxWidth()
                     .background(Color.Transparent),
                     horizontalArrangement = Arrangement.SpaceEvenly) {
-                    WeatherCard(label = "Diseases", icon = Icons.Default.WarningAmber, onClick = {
+                    WeatherCard(label = "Supervise", icon = Icons.Default.WarningAmber, onClick = {
                         navController.navigate(Screens.Diseases.screens)
                     })
                     WeatherCard(label = "Weather", icon = Icons.Default.Cloud, onClick = {
@@ -318,13 +318,8 @@ fun Home(navController: NavHostController, email: String){
                         navController.navigate(Screens.News.screens)
                     })
                 }
-//            }
-
             }
-
-
         }
-
         }
     }
 }

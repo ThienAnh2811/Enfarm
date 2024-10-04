@@ -131,7 +131,7 @@ fun NewCard(
 ) {
      val modifier = Modifier
          .clickable { onClick() }
-        .padding(horizontal = 16.dp, vertical = 10.dp)
+        .padding(horizontal = 5.dp, vertical = 10.dp)
         .fillMaxWidth()
     Card(
         modifier = modifier,
@@ -167,7 +167,8 @@ fun NewCard(
                 Text(
                     text = news.desc,
                     color = Color.White,
-                    fontSize = 14.sp
+                    fontSize = 14.sp,
+                    maxLines = 2
                 )
             }
 
