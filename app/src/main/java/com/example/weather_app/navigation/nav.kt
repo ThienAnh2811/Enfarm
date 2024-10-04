@@ -29,11 +29,13 @@ import com.example.weather_app.ui.theme.screens.knowledge.Knowledge
 import com.example.weather_app.ui.theme.screens.knowledge.KnowledgeDetailScreen
 import com.example.weather_app.ui.theme.screens.news.NewsDetailScreen
 import com.example.weather_app.viewmodel.KnowledgeViewModel
+import com.example.weather_app.viewmodel.LoginViewModel
 import com.example.weather_app.viewmodel.NewsViewModel
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun navGraph(navController: NavHostController) {
+    val loginViewModel: LoginViewModel = viewModel()
     val newsViewModel: NewsViewModel = viewModel()
     val knodledgeViewModel: KnowledgeViewModel = viewModel()
     val newsList by newsViewModel.allNews.observeAsState(emptyList())
@@ -64,7 +66,7 @@ fun navGraph(navController: NavHostController) {
             Knowledge(navController, knodledgeViewModel)
         }
         composable(Screens.Login.screens) {
-            Login(navController)
+            Login(navController, loginViewModel)
         }
         composable(Screens.SignUp.screens) {
             Signup(navController)

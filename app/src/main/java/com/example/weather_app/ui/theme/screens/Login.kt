@@ -1,6 +1,7 @@
 package com.example.weather_app.ui.theme.screens
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -25,7 +26,9 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -45,24 +48,36 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import com.example.weather_app.R
 import com.example.weather_app.model.Screens
 import com.example.weather_app.ui.theme.BlueJC
+import com.example.weather_app.viewmodel.LoginViewModel
 import com.google.firebase.auth.FirebaseAuth
 import papaya.`in`.sendmail.SendMail
 import kotlin.random.Random
 import kotlin.random.nextInt
-
-@ExperimentalComposeUiApi
 @OptIn(ExperimentalMaterial3Api::class)
+@ExperimentalComposeUiApi
 @Composable
-fun Login(navController: NavHostController) {
+fun Login(navController: NavHostController, loginViewModel: LoginViewModel = viewModel()) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     val context = LocalContext.current.applicationContext
     val auth = FirebaseAuth.getInstance()
+    val isLoggedIn by loginViewModel.isLoggedIn.observeAsState(false)
+    LaunchedEffect(Unit) {
+        loginViewModel.checkLoginStatus(context)
+    }
+    if (isLoggedIn) {
+        LaunchedEffect(Unit) {
+            navController.navigate(Screens.Home.screens) {
+                popUpTo(0)
+            }
+        }
+    }
 
     ConstraintLayout(
         modifier = Modifier.fillMaxSize()
@@ -81,7 +96,7 @@ fun Login(navController: NavHostController) {
                     width = Dimension.fillToConstraints
                 }
                 .clip(CutCornerShape(bottomEnd = 30.dp))
-        ){
+        ) {
             Image(
                 painter = painterResource(id = R.drawable.signup),
                 contentDescription = "Signup Image",
@@ -90,7 +105,6 @@ fun Login(navController: NavHostController) {
                     .height(320.dp)
                     .padding(bottom = 60.dp)
             )
-
         }
 
         Box(
@@ -125,9 +139,7 @@ fun Login(navController: NavHostController) {
                         )
                         TextField(
                             value = email,
-                            onValueChange = {
-                                email = it
-                            },
+                            onValueChange = { email = it },
                             placeholder = { Text("Email") },
                             modifier = Modifier.fillMaxWidth(),
                             isError = email.isEmpty(),
@@ -136,9 +148,7 @@ fun Login(navController: NavHostController) {
                         Spacer(modifier = Modifier.height(8.dp))
                         TextField(
                             value = password,
-                            onValueChange = {
-                                password = it
-                            },
+                            onValueChange = { password = it },
                             placeholder = { Text("Password") },
                             visualTransformation = PasswordVisualTransformation(),
                             modifier = Modifier.fillMaxWidth(),
@@ -148,15 +158,20 @@ fun Login(navController: NavHostController) {
                         Spacer(modifier = Modifier.height(17.dp))
                         Button(
                             onClick = {
-                                if (password.isEmpty()) {
-                                    Toast.makeText(context, "Enter the password", Toast.LENGTH_SHORT).show()
-                                } else if (email.isEmpty()) {
-                                    Toast.makeText(context, "Enter the email", Toast.LENGTH_SHORT).show()
+                                if (email.isEmpty() || password.isEmpty()) {
+                                    Toast.makeText(context, "Enter email and password", Toast.LENGTH_SHORT).show()
                                 } else {
                                     auth.signInWithEmailAndPassword(email, password)
                                         .addOnCompleteListener {
                                             if (it.isSuccessful) {
-                                                navController.navigate(Screens.Home.createRoute(navController, email)){
+                                                val sharedPreferences = context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
+                                                sharedPreferences.edit()
+                                                    .putString("email", email)
+                                                    .putString("password", password)
+                                                    .apply()
+                                                loginViewModel.checkLoginStatus(context)
+
+                                                navController.navigate(Screens.Home.createRoute(navController, email)) {
                                                     popUpTo(0)
                                                 }
                                             } else {
@@ -165,17 +180,11 @@ fun Login(navController: NavHostController) {
                                         }
                                 }
                             },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(30.dp)
-                                .background(BlueJC),
+                            modifier = Modifier.fillMaxWidth().height(30.dp),
                             shape = RectangleShape,
                             colors = ButtonDefaults.buttonColors(containerColor = BlueJC)
                         ) {
-                            Text(
-                                "LOGIN",
-                                fontSize = 15.sp
-                            )
+                            Text("LOGIN", fontSize = 15.sp)
                         }
                     }
                 }

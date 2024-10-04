@@ -1,5 +1,6 @@
 package com.example.weather_app.ui.theme.screens
 
+import android.content.Context
 import android.widget.Toast
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -147,7 +148,11 @@ fun Home(navController: NavHostController, email: String){
                 NavigationDrawerItem(label = { Text(text = "Logout", color = BlueJC) },
                     selected = false,
                     onClick = {
-                        Toast.makeText(context, "Logout", Toast.LENGTH_SHORT).show()
+                        val sharedPreferences = context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
+                        val editor = sharedPreferences.edit()
+                        editor.clear()
+                        editor.apply()
+                        navController.navigate(Screens.Login.screens)
                     },
                     icon = { Icon(imageVector = Icons.Default.Home,
                         contentDescription = "logout",
@@ -241,7 +246,6 @@ fun Home(navController: NavHostController, email: String){
                 }
             }
         ) {
-//            navGraph(navController = navigationController)
                 paddingValues ->  Box(modifier = Modifier
             .fillMaxSize()
             .paint(
@@ -290,13 +294,8 @@ fun Home(navController: NavHostController, email: String){
                             contentDescription = "")
                     }
                     }
-//                PageIndicator(pageCount = images.size,
-//                    currentPage = pagerState.currentPage)
 
                 }
-
-//            Spacer(modifier = Modifier.height(5.dp))
-
                 Row(modifier = Modifier
                     .fillMaxWidth()
                     .background(Color.Transparent),
