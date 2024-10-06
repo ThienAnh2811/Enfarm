@@ -90,7 +90,7 @@ import java.time.format.DateTimeFormatter
 )
 @Composable
 fun Home(navController: NavHostController, email: String){
-
+    var bg = R.drawable.background;
     val images = listOf(
         R.drawable.firefly,
         R.drawable.marisa
@@ -106,6 +106,14 @@ fun Home(navController: NavHostController, email: String){
 
     val viewModel: WeatherViewModel = viewModel()
     val weatherData by viewModel.weatherData.collectAsState()
+    weatherData?.let {
+        if(it.main.temp.toInt() > 32){
+            bg = R.drawable.sunny_bg
+        }
+        else if(it.main.temp.toInt()<31&&it.main.temp.toInt() > 25)
+            bg = R.drawable.haze_bg
+        else bg = R.drawable.background
+    }
     val currentDate = LocalDate.now()
     val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
     val formattedDate = currentDate.format(formatter)
@@ -249,7 +257,7 @@ fun Home(navController: NavHostController, email: String){
                 paddingValues ->  Box(modifier = Modifier
             .fillMaxSize()
             .paint(
-                painterResource(id = R.drawable.background),
+                painterResource(id = bg),
                 contentScale = ContentScale.FillBounds
             )
             .padding(paddingValues)){

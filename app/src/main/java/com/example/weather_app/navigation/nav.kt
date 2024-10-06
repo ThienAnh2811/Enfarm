@@ -54,7 +54,7 @@ fun navGraph(navController: NavHostController) {
             Data()
         }
         composable(Screens.Weather.screens) {
-            WeatherS()
+            WeatherS(navController)
         }
         composable(Screens.Diseases.screens) {
             Diseases()
