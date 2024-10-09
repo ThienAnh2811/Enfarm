@@ -86,6 +86,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.weather_app.R
 import com.example.weather_app.model.Screens
 import com.example.weather_app.ui.theme.BlueJC
+import com.example.weather_app.ui.theme.GreenJC
 import com.example.weather_app.ui.theme.WeatherCard
 import com.example.weather_app.viewmodel.WeatherViewModel
 import kotlinx.coroutines.delay
@@ -106,9 +107,12 @@ fun Home(navController: NavHostController, email: String){
     var startY by remember { mutableStateOf(0f) }  // Initial Y for dragging
     var isDragging by remember { mutableStateOf(false) }
     var bg = R.drawable.background;
+//    val images = listOf(
+//        R.drawable.firefly,
+//        R.drawable.marisa
+//    )
     val images = listOf(
-        R.drawable.firefly,
-        R.drawable.marisa
+        R.drawable.machine
     )
     val pagerState = rememberPagerState(pageCount = { images.size })
     LaunchedEffect(Unit){
@@ -125,7 +129,7 @@ fun Home(navController: NavHostController, email: String){
         if(it.main.temp.toInt() > 32){
             bg = R.drawable.sunny_bg
         }
-        else if(it.main.temp.toInt()<31&&it.main.temp.toInt() > 25)
+        else if(it.main.temp.toInt()<31&&it.main.temp.toInt() > 20)
             bg = R.drawable.haze_bg
         else bg = R.drawable.background
     }
@@ -311,10 +315,10 @@ fun Home(navController: NavHostController, email: String){
                         modifier = Modifier.wrapContentSize()) {
                             currentPage -> Card(
                         modifier = Modifier.wrapContentSize(),
-                        elevation = CardDefaults.cardElevation(8.dp)
+//                        elevation = CardDefaults.cardElevation(8.dp)
                     ) {
                         Image(painter = painterResource(id = images[currentPage]),
-                            contentDescription = "")
+                            contentDescription = "", modifier = Modifier.fillMaxSize())
                     }
                     }
 
@@ -375,8 +379,9 @@ fun Home(navController: NavHostController, email: String){
                         onClick = { /* Handle click event */ },
                         modifier = Modifier
                             .offset { IntOffset(offsetX.roundToInt(), offsetY.roundToInt()) }  // Offset FAB based on dragging
-                            .size(56.dp), // Standard size for FAB
-                        shape = CircleShape
+                            .size(56.dp),
+                        shape = CircleShape,
+                        containerColor = BlueJC
                     ) {
                         Icon(Icons.Filled.Message, contentDescription = "Add")
                     }
