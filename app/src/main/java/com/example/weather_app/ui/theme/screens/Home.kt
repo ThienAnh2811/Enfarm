@@ -6,6 +6,7 @@ import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,6 +16,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
@@ -22,6 +24,7 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Book
 import androidx.compose.material.icons.filled.Cloud
 import androidx.compose.material.icons.filled.Home
@@ -37,6 +40,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ModalDrawerSheet
@@ -61,12 +65,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.paint
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.input.pointer.positionChange
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.modifier.ModifierLocal
 import androidx.compose.ui.modifier.modifierLocalProvider
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -83,6 +91,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import kotlin.math.roundToInt
 
 
 @OptIn(ExperimentalComposeUiApi::class, ExperimentalFoundationApi::class,
@@ -90,6 +99,11 @@ import java.time.format.DateTimeFormatter
 )
 @Composable
 fun Home(navController: NavHostController, email: String){
+    var offsetX by remember { mutableStateOf(0f) }
+    var offsetY by remember { mutableStateOf(0f) }
+    var startX by remember { mutableStateOf(0f) }  // Initial X for dragging
+    var startY by remember { mutableStateOf(0f) }  // Initial Y for dragging
+    var isDragging by remember { mutableStateOf(false) }
     var bg = R.drawable.background;
     val images = listOf(
         R.drawable.firefly,
@@ -326,8 +340,49 @@ fun Home(navController: NavHostController, email: String){
                         navController.navigate(Screens.News.screens)
                     })
                 }
+                Spacer(modifier = Modifier.height(20.dp))
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()  // Make the Box take up the full screen
+                        .pointerInput(Unit) {
+                            detectDragGestures(
+                                onDragStart = {
+                                    // Start dragging from current position
+                                    startX = offsetX
+                                    startY = offsetY
+                                    isDragging = true
+                                },
+                                onDragEnd = {
+                                    // End of drag interaction
+                                    isDragging = false
+                                },
+                                onDragCancel = {
+                                    // Drag got canceled (optional handling)
+                                    isDragging = false
+                                },
+                                onDrag = { change, dragAmount ->
+                                    // Handle the drag event, update offsets based on movement
+                                    change.consume() // Consume the drag gesture event to prevent further propagation
+                                    offsetX += dragAmount.x // Update X offset based on drag
+                                    offsetY += dragAmount.y // Update Y offset based on drag
+                                }
+                            )
+                        }
+                ) {
+                    // Floating Action Button inside the Box
+                    FloatingActionButton(
+                        onClick = { /* Handle click event */ },
+                        modifier = Modifier
+                            .offset { IntOffset(offsetX.roundToInt(), offsetY.roundToInt()) }  // Offset FAB based on dragging
+                            .size(56.dp), // Standard size for FAB
+                        shape = CircleShape
+                    ) {
+                        Icon(Icons.Filled.Add, contentDescription = "Add")
+                    }
+                }
             }
         }
+
         }
     }
 }
@@ -354,3 +409,9 @@ fun Home(navController: NavHostController, email: String){
 //        .clip(CircleShape)
 //        .background(if (isSelected) Color(0xff373737) else Color(0xA8373737)))
 //}
+
+@Preview(showSystemUi = true)
+@Composable
+fun MovableFAB() {
+
+}
