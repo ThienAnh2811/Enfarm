@@ -29,6 +29,7 @@ import androidx.compose.material.icons.filled.Book
 import androidx.compose.material.icons.filled.Cloud
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.List
+import androidx.compose.material.icons.filled.Message
 import androidx.compose.material.icons.filled.Newspaper
 import androidx.compose.material.icons.filled.WarningAmber
 import androidx.compose.material.icons.rounded.Menu
@@ -377,7 +378,7 @@ fun Home(navController: NavHostController, email: String){
                             .size(56.dp), // Standard size for FAB
                         shape = CircleShape
                     ) {
-                        Icon(Icons.Filled.Add, contentDescription = "Add")
+                        Icon(Icons.Filled.Message, contentDescription = "Add")
                     }
                 }
             }
