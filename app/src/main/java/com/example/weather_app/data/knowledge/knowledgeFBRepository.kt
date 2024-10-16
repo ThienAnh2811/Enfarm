@@ -66,7 +66,6 @@ class FirebaseKnowledgeRepository {
                     knlRef.setValue(firebaseknowledge)
                         .addOnSuccessListener {
                             Log.d("FirebaseSync", "Knowledge synced successfully with ID: ${knlRef.key}")
-                            // Call the success callback to notify the insertion was successful
                             onSuccess()
                         }
                         .addOnFailureListener { e ->
